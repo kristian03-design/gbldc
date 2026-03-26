@@ -9,13 +9,15 @@ use App\Models\QRCode;
 class loanDashboard extends Controller
 {
     public function view(){
-        $fist_name = Auth::guard('officialmember')->user()->first_name;
-        $middle_name = Auth::guard('officialmember')->user()->middle_name;
-        $last_name = Auth::guard('officialmember')->user()->last_name;
-        $email = Auth::guard('officialmember')->user()->email;
-        $member_id = Auth::guard('officialmember')->user()->member_id;
-        $gender = Auth::guard('officialmember')->user()->gender;
-        $PaymentHistory = paymentModel::where('member_id', $member_id)->get();
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
+        $gender = $user->gender;
+        $PaymentHistory = paymentModel::where('member_id', $member_id)->orderBy('transaction_date', 'desc')->get();
         $loans = loan::where('member_id', $member_id)->get();
 
         $loanInfo = loan::where('member_id', $member_id)->where('loan_status', '!=', 'Fully Paid')->orderBy('created_at', 'desc')->first();
@@ -32,17 +34,26 @@ class loanDashboard extends Controller
         $loanPaymentStartDate = $loanInfo ? $loanInfo->payment_start_date : null;
         $sharedCapitalPaymentStartDate = $sharedCapitalInfo ? $sharedCapitalInfo->payment_start_date : null;
 
-        // dd($loanInfo);
-        return view('Members.LoanDashboard', compact('fist_name', 'middle_name', 'last_name','email','loanInfo','PaymentHistory','loans', 'sharedCapitalInfo', 'currentDueLoan', 'currentDueSharedCapital', 'loanPaymentStartDate', 'sharedCapitalPaymentStartDate', 'gender', 'activeQRCode'));
+        $nextLoanSchedule = null;
+        if ($loanInfo) {
+            $nextLoanSchedule = \App\Models\LoanSchedule::where('loan_number', $loanInfo->loan_number)
+                ->whereIn('status', ['pending', 'partial'])
+                ->orderBy('due_date', 'asc')
+                ->first();
+        }
+
+        return view('Members.LoanDashboard', compact('fist_name', 'middle_name', 'last_name','email','member_id','loanInfo','PaymentHistory','loans', 'sharedCapitalInfo', 'currentDueLoan', 'currentDueSharedCapital', 'loanPaymentStartDate', 'sharedCapitalPaymentStartDate', 'gender', 'activeQRCode', 'nextLoanSchedule'));
     }
 
     public function paymentSchedule($type = null){
-        $fist_name = Auth::guard('officialmember')->user()->first_name;
-        $middle_name = Auth::guard('officialmember')->user()->middle_name;
-        $last_name = Auth::guard('officialmember')->user()->last_name;
-        $email = Auth::guard('officialmember')->user()->email;
-        $member_id = Auth::guard('officialmember')->user()->member_id;
-        $gender = Auth::guard('officialmember')->user()->gender;
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
+        $gender = $user->gender;
 
         $currentDay = date('j');
         $currentMonth = date('n');
@@ -55,29 +66,29 @@ class loanDashboard extends Controller
         $paymentHistory = paymentModel::where('member_id', $member_id)->get();
 
         if ($type === 'loan' || $type === null) {
-            $loanInfo = loan::where('member_id', $member_id)->first();
+            $loanInfo = loan::where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
             if ($loanInfo) {
-                // Generate loan schedule data based on frequency and term
-                $loanScheduleData = $this->generateScheduleData(
-                    $loanInfo->frequency_of_payment ?? 'monthly', 
-                    $loanInfo->payment_start_date ?? null, 
-                    $paymentHistory, 
-                    'Loan Payment',
-                    $loanInfo->loan_term
-                );
+                // Fetch exact loan schedules from database
+                $loanScheduleData = \App\Models\LoanSchedule::where('loan_number', $loanInfo->loan_number)->orderBy('due_date', 'asc')->get();
             }
         }
 
         if ($type === 'shared_capital' || $type === null) {
             $sharedCapitalInfo = \App\Models\sharedCapital::where('member_id', $member_id)->first();
             if ($sharedCapitalInfo) {
-                // Generate shared capital schedule data
-                $sharedCapitalScheduleData = $this->generateScheduleData($sharedCapitalInfo->payment_frequency ?? 'monthly', $sharedCapitalInfo->payment_start_date ?? null, $paymentHistory, 'Shared Capital');
+                // Generate shared capital schedule data using configured number of payments (3, 6, 9, 12 months, etc.)
+                $sharedCapitalScheduleData = $this->generateScheduleData(
+                    $sharedCapitalInfo->payment_frequency ?? 'monthly',
+                    $sharedCapitalInfo->payment_start_date ?? null,
+                    $paymentHistory,
+                    'Shared Capital',
+                    $sharedCapitalInfo->number_of_payments ?? null
+                );
             }
         }
 
         return view('Members.PaymentSchedule', compact(
-            'fist_name', 'middle_name', 'last_name', 'email',
+            'fist_name', 'middle_name', 'last_name', 'email', 'member_id',
             'loanInfo', 'sharedCapitalInfo', 'loanScheduleData', 'sharedCapitalScheduleData', 'type',
             'currentDay', 'currentMonth', 'currentYear', 'gender'
         ));
@@ -222,39 +233,45 @@ class loanDashboard extends Controller
     }
 
     public function loanHistory(){
-        $fist_name = Auth::guard('officialmember')->user()->first_name;
-        $middle_name = Auth::guard('officialmember')->user()->middle_name;
-        $last_name = Auth::guard('officialmember')->user()->last_name;
-        $email = Auth::guard('officialmember')->user()->email;
-        $member_id = Auth::guard('officialmember')->user()->member_id;
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
         $loans = loan::where('member_id', $member_id)->get();
 
-        return view('Members.MemberLoanHistory', compact('fist_name', 'middle_name', 'last_name','email','loans'));
+        return view('Members.MemberLoanHistory', compact('fist_name', 'middle_name', 'last_name','email','member_id','loans'));
     }
 
     public function fullPaymentHistory(){
-        $fist_name = Auth::guard('officialmember')->user()->first_name;
-        $middle_name = Auth::guard('officialmember')->user()->middle_name;
-        $last_name = Auth::guard('officialmember')->user()->last_name;
-        $email = Auth::guard('officialmember')->user()->email;
-        $member_id = Auth::guard('officialmember')->user()->member_id;
-        $gender = Auth::guard('officialmember')->user()->gender;
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
+        $gender = $user->gender;
         
         // Get ALL payment history (both Loan Payments and Shared Capital)
         $allPayments = paymentModel::where('member_id', $member_id)
             ->orderBy('transaction_date', 'desc')
             ->get();
 
-        return view('Members.FullPaymentHistory', compact('fist_name', 'middle_name', 'last_name', 'email', 'allPayments', 'gender'));
+        return view('Members.FullPaymentHistory', compact('fist_name', 'middle_name', 'last_name', 'email', 'member_id', 'allPayments', 'gender'));
     }
 
     public function checkLoanStatus(){
-        $fist_name = Auth::guard('officialmember')->user()->first_name;
-        $middle_name = Auth::guard('officialmember')->user()->middle_name;
-        $last_name = Auth::guard('officialmember')->user()->last_name;
-        $email = Auth::guard('officialmember')->user()->email;
-        $member_id = Auth::guard('officialmember')->user()->member_id;
-        $gender = Auth::guard('officialmember')->user()->gender;
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
+        $gender = $user->gender;
 
         // Get current active loan (not fully paid)
         $currentLoan = loan::where('member_id', $member_id)
@@ -283,6 +300,57 @@ class loanDashboard extends Controller
         return view('Members.CheckLoanStatus', compact(
             'fist_name', 'middle_name', 'last_name', 'email', 'gender',
             'currentLoan', 'loanPaymentHistory', 'loanProgress', 'totalPaid', 'member_id'
+        ));
+    }
+
+    public function checkSharedCapitalStatus(){
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+        $fist_name = $user->first_name;
+        $middle_name = $user->middle_name;
+        $last_name = $user->last_name;
+        $email = $user->email;
+        $member_id = $user->member_id;
+        $gender = $user->gender;
+
+        // Get current shared capital record
+        $currentSharedCapital = \App\Models\sharedCapital::where('member_id', $member_id)->first();
+
+        // Get payment history for shared capital
+        $sharedCapitalPaymentHistory = null;
+        if ($currentSharedCapital) {
+            $sharedCapitalPaymentHistory = paymentModel::where('member_id', $member_id)
+                ->where('transaction_type', 'Shared Capital')
+                ->orderBy('transaction_date', 'desc')
+                ->get();
+        }
+
+        // Calculate progress
+        $sharedCapitalProgress = 0;
+        $totalPaid = 0;
+        $totalSubscription = 0;
+        if ($currentSharedCapital) {
+            // Using completed payments to calculate total paid
+            $totalPaid = $sharedCapitalPaymentHistory ? 
+                $sharedCapitalPaymentHistory->filter(function($payment) {
+                    $status = strtolower($payment->payment_status);
+                    return str_contains($status, 'complet') || str_contains($status, 'paid');
+                })->sum('payment_amount') : 0;
+            
+            // Assuming shared_capital_amount models the remaining balance, 
+            // the total subscription is the remaining balance + total paid
+            $totalSubscription = (float)$currentSharedCapital->shared_capital_amount + $totalPaid;
+            
+            if ($totalSubscription > 0) {
+                $sharedCapitalProgress = ($totalPaid / $totalSubscription) * 100;
+                // Cap at 100
+                $sharedCapitalProgress = min(100, $sharedCapitalProgress);
+            }
+        }
+
+        return view('Members.CheckSharedCapital', compact(
+            'fist_name', 'middle_name', 'last_name', 'email', 'gender',
+            'currentSharedCapital', 'sharedCapitalPaymentHistory', 'sharedCapitalProgress', 'totalPaid', 'totalSubscription', 'member_id'
         ));
     }
 

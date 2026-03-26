@@ -214,14 +214,25 @@
     .badge-completed::before { background: #16a34a; }
     .badge-pending   { background: #fefce8; color: #a16207; }
     .badge-pending::before   { background: #ca8a04; }
-    .badge-failed    { background: #fef2f2; color: #dc2626; }
-    .badge-failed::before    { background: #dc2626; }
+    .badge-failed    { background: #f0fdf4; color: #16a34a; }
+    .badge-failed::before    { background: #16a34a; }
 
-    /* ── Table footer ── */
+    /* ── Table footer & Pagination ── */
     .table-footer {
       padding: 12px 22px; border-top: 1px solid var(--border);
-      font-size: 12px; color: var(--muted); text-align: center;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px;
     }
+    .footer-text { font-size: 13px; color: var(--muted); }
+    .pagination-controls { display: inline-flex; gap: 4px; align-items: center; }
+    .page-btn {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--white); cursor: pointer; font-size: 13px; font-weight: 600;
+      color: var(--muted); transition: all 0.2s; display: flex; align-items: center; justify-content: center; min-width: 32px;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--emerald); color: var(--forest); }
+    .page-btn.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ── Empty state ── */
     .empty-state {
@@ -307,8 +318,10 @@
       @endif
     </div>
     <div>
-      <div class="profile-name">{{ $fist_name }} {{ $middle_name }} {{ $last_name }}</div>
-      <div class="profile-email">{{ $email }}</div>
+      <div class="profile-name">{{ $fist_name }} {{ $last_name }}</div>
+      <div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 600; color: #d1fae5; border: 1px solid rgba(255, 255, 255, 0.15); letter-spacing: 0.03em;">
+        <i data-lucide="id-card" style="width: 12px; height: 12px; opacity: 0.9;"></i> {{$member_id}}
+      </div>
     </div>
   </div>
 
@@ -321,6 +334,12 @@
     </a>
     <a href="{{ route('Member.Check.Loan.Status') }}" class="nav-item">
       <i data-lucide="search"></i> Check Loan Status
+    </a>
+    <a href="{{ route('Member.Check.Shared.Capital') }}" class="nav-item">
+      <i data-lucide="piggy-bank"></i> Check Shared Capital
+    </a>
+    <a href="{{ route('Member.Notifications') }}" class="nav-item">
+      <i data-lucide="bell"></i> Notification
     </a>
     <a href="{{ route('Member.ContactUs') }}" class="nav-item">
       <i data-lucide="mail"></i> Contact Us
@@ -437,7 +456,8 @@
             </tr>
           </thead>
           <tbody>
-            @forelse($allPayments as $payment)
+            @if(count($allPayments) > 0)
+            @foreach($allPayments as $payment)
             @php $s = strtolower($payment->payment_status); @endphp
             <tr data-type="{{ $payment->transaction_type }}">
               <td>
@@ -464,8 +484,8 @@
               <td><span class="ref-num">{{ $payment->reference_number }}</span></td>
               <td><span class="remarks-text" title="{{ $payment->remarks }}">{{ $payment->remarks ?? '—' }}</span></td>
             </tr>
-            @empty
-            @endforelse
+            @endforeach
+            @endif
           </tbody>
         </table>
 
@@ -483,7 +503,10 @@
       </div>
 
       <div class="table-footer" id="table-footer">
-        Showing all {{ $totalPayments }} payment records
+        <div class="footer-text" id="table-footer-text">
+          Showing all {{ $totalPayments }} payment records
+        </div>
+        <div class="pagination-controls" id="pagination-controls"></div>
       </div>
     </div>
 
@@ -528,38 +551,140 @@
   // Active filter type (tracked globally)
   let activeFilter = 'all';
 
-  // Filter by transaction type
+  // Pagination state
+  let currentPage = 1;
+  const rowsPerPage = 10;
+
   function filterTable(type, btn) {
     activeFilter = type;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    currentPage = 1; // reset to page 1 on filter
     applyFilters();
   }
 
   // Search
-  document.getElementById('table-search').addEventListener('input', applyFilters);
+  document.getElementById('table-search').addEventListener('input', function() {
+      currentPage = 1; // reset to page 1 on search
+      applyFilters();
+  });
 
   function applyFilters() {
     const term = document.getElementById('table-search').value.toLowerCase().trim();
     const rows = document.querySelectorAll('#payment-table tbody tr');
-    let visible = 0;
+    let filteredRows = [];
 
     rows.forEach(row => {
       const typeMatch = activeFilter === 'all' || row.dataset.type === activeFilter;
       const textMatch = !term || row.textContent.toLowerCase().includes(term);
-      const show = typeMatch && textMatch;
-      row.style.display = show ? '' : 'none';
-      if (show) visible++;
+      if (typeMatch && textMatch) {
+        filteredRows.push(row);
+      }
+      row.style.display = 'none'; // Hide all initially
+    });
+
+    // Pagination bounds
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIdx = (currentPage - 1) * rowsPerPage;
+    const endIdx = startIdx + rowsPerPage;
+
+    // Show only the slice for current page
+    filteredRows.slice(startIdx, endIdx).forEach(row => {
+      row.style.display = '';
     });
 
     const noResults = document.getElementById('no-results');
-    const footer    = document.getElementById('table-footer');
-    const count     = document.getElementById('row-count');
+    const footerText = document.getElementById('table-footer-text');
+    const count = document.getElementById('row-count');
 
-    noResults.style.display = visible === 0 ? 'block' : 'none';
-    footer.textContent = `Showing ${visible} of {{ $totalPayments }} records`;
-    count.textContent  = `${visible} records`;
+    noResults.style.display = filteredRows.length === 0 ? 'block' : 'none';
+    
+    if (filteredRows.length > 0) {
+      footerText.innerHTML = `Showing <b>${startIdx + 1}</b> to <b>${Math.min(endIdx, filteredRows.length)}</b> of <b>${filteredRows.length}</b> payment records`;
+    } else {
+      footerText.innerHTML = `Showing 0 records`;
+    }
+    count.textContent = `${filteredRows.length} records`;
+
+    renderPagination(totalPages);
   }
+
+  function changePage(page) {
+    currentPage = page;
+    applyFilters();
+  }
+
+  function renderPagination(totalPages) {
+    const container = document.getElementById('pagination-controls');
+    container.innerHTML = '';
+    
+    if (totalPages <= 1) return; // No pagination needed for 1 page
+
+    // Prev Button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn';
+    prevBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
+    prevBtn.onclick = () => changePage(currentPage - 1);
+    prevBtn.disabled = currentPage === 1;
+    container.appendChild(prevBtn);
+
+    let startPage = Math.max(1, currentPage - 1);
+    let endPage = Math.min(totalPages, currentPage + 1);
+
+    if (currentPage === 1) endPage = Math.min(totalPages, 3);
+    if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
+
+    if (startPage > 1) {
+        const firstBtn = document.createElement('button');
+        firstBtn.className = 'page-btn';
+        firstBtn.innerText = '1';
+        firstBtn.onclick = () => changePage(1);
+        container.appendChild(firstBtn);
+        if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.innerText = '...';
+            dots.style.color = '#9ca3af';
+            container.appendChild(dots);
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn';
+        if (i === currentPage) btn.classList.add('active');
+        btn.innerText = i;
+        btn.onclick = () => changePage(i);
+        container.appendChild(btn);
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.innerText = '...';
+            dots.style.color = '#9ca3af';
+            container.appendChild(dots);
+        }
+        const lastBtn = document.createElement('button');
+        lastBtn.className = 'page-btn';
+        lastBtn.innerText = totalPages;
+        lastBtn.onclick = () => changePage(totalPages);
+        container.appendChild(lastBtn);
+    }
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn';
+    nextBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+    nextBtn.onclick = () => changePage(currentPage + 1);
+    nextBtn.disabled = currentPage === totalPages;
+    container.appendChild(nextBtn);
+  }
+
+  // Initialize view
+  applyFilters();
 </script>
 </body>
 </html>

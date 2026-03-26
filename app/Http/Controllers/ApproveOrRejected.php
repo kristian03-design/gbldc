@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
+use App\Models\SharedCapital;
 
 
 
@@ -156,6 +157,38 @@ class ApproveOrRejected extends Controller
             // #endregion
 
             throw $e;
+        }
+        
+        // Auto-create default shared capital record for new member (50 shares = ₱5,000)
+        if (!SharedCapital::where('member_id', $memberid)->exists()) {
+            $now = now();
+            $sharedCapitalAmount = 5000;
+            $defaultMonths = 12;
+            $paymentPerSchedule = round($sharedCapitalAmount / $defaultMonths, 2);
+            $paymentStartDate = $now->copy()->addMonthNoOverflow()->startOfMonth()->toDateString();
+
+            SharedCapital::create([
+                'last_name' => $find->last_name,
+                'first_name' => $find->first_name,
+                'middle_name' => $find->middle_name,
+                'street_address' => $find->street_address,
+                'barangay' => $find->barangay,
+                'city' => $find->city,
+                'province' => $find->province,
+                'phone' => $find->contact_number,
+                'email' => $find->email,
+                'shared_capital_amount' => $sharedCapitalAmount,
+                'shared_capital_amount_balance' => $sharedCapitalAmount,
+                'date_of_membership' => $now->toDateString(),
+                'member_id' => $memberid,
+                'encoded_by' => Auth::user()->email,
+                'remarks' => 'Auto-generated 50-share membership subscription',
+                'record_creation_date' => $now->toDateString(),
+                'payment_frequency' => 'monthly',
+                'payment_amount_per_schedule' => $paymentPerSchedule,
+                'payment_start_date' => $paymentStartDate,
+                'number_of_payments' => $defaultMonths,
+            ]);
         }
         
         // Send welcome email to the newly approved member

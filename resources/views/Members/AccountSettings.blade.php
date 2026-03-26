@@ -290,7 +290,9 @@
     </div>
     <div>
       <div class="profile-name">{{ $fist_name ?? '' }} {{ $last_name ?? '' }}</div>
-      <div class="profile-email">{{ $email ?? '' }}</div>
+      <div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 600; color: #d1fae5; border: 1px solid rgba(255, 255, 255, 0.15); letter-spacing: 0.03em;">
+        <i data-lucide="id-card" style="width: 12px; height: 12px; opacity: 0.9;"></i> {{$member_id ?? ''}}
+      </div>
     </div>
   </div>
 
@@ -303,6 +305,12 @@
     </a>
     <a href="{{ route('Member.Check.Loan.Status') }}" class="nav-item">
       <i data-lucide="search"></i> Check Loan Status
+    </a>
+    <a href="{{ route('Member.Check.Shared.Capital') }}" class="nav-item">
+      <i data-lucide="piggy-bank"></i> Check Shared Capital
+    </a>
+    <a href="{{ route('Member.Notifications') }}" class="nav-item">
+      <i data-lucide="bell"></i> Notification
     </a>
     <a href="{{ route('Member.ContactUs') }}" class="nav-item">
       <i data-lucide="mail"></i> Contact Us
@@ -503,7 +511,7 @@
     <p>Are you sure you want to logout? You'll need to sign in again to access your account.</p>
     <div class="modal-btn-row">
       <button class="modal-btn cancel" onclick="closeLogoutModal()">Cancel</button>
-      <a href="{{ route('Member.Logout') }}" class="modal-btn danger"
+      <a href="{{ route('Landing.Page') }}" class="modal-btn danger"
         style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
         <i data-lucide="log-out" style="width:14px;height:14px;"></i> Logout
       </a>

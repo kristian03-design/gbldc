@@ -276,7 +276,9 @@
     </div>
     <div>
       <div class="profile-name">{{$fist_name}} {{$last_name}}</div>
-      <div class="profile-email">{{$email}}</div>
+      <div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 600; color: #d1fae5; border: 1px solid rgba(255, 255, 255, 0.15); letter-spacing: 0.03em;">
+        <i data-lucide="id-card" style="width: 12px; height: 12px; opacity: 0.9;"></i> {{$member_id}}
+      </div>
     </div>
   </div>
 
@@ -289,6 +291,12 @@
     </a>
     <a href="{{ route('Member.Check.Loan.Status') }}" class="nav-item">
       <i data-lucide="search"></i> Check Loan Status
+    </a>
+    <a href="{{ route('Member.Check.Shared.Capital') }}" class="nav-item">
+      <i data-lucide="piggy-bank"></i> Check Shared Capital
+    </a>
+    <a href="{{ route('Member.Notifications') }}" class="nav-item">
+      <i data-lucide="bell"></i> Notification
     </a>
     <a href="{{ route('Member.ContactUs') }}" class="nav-item active">
       <i data-lucide="mail"></i> Contact Us
@@ -342,7 +350,7 @@
               <div class="contact-icon"><i data-lucide="map-pin"></i></div>
               <div>
                 <h3>Office Address</h3>
-                <p>Greater Bulacan Livelihood Development Cooperative<br>Baliuag, Bulacan, Philippines</p>
+                <p>Greater Bulacan Livelihood Development Cooperative<br>Makinabang Baliuag, Bulacan, Philippines</p>
               </div>
             </div>
             <div class="contact-item">
@@ -356,7 +364,7 @@
               <div class="contact-icon"><i data-lucide="mail"></i></div>
               <div>
                 <h3>Email</h3>
-                <p>info@gbldccoop.com<br>support@gbldccoop.com</p>
+                <p>gbldccoop@gmail.com<br></p>
               </div>
             </div>
             <div class="contact-item">

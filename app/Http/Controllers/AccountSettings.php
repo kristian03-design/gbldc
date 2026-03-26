@@ -14,6 +14,7 @@ class AccountSettings extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
         
         return view('Members.AccountSettings', [
@@ -24,6 +25,7 @@ class AccountSettings extends Controller
             'email' => $user->email,
             'contact_number' => $user->contact_number,
             'gender' => $user->gender,
+            'member_id' => $user->member_id,
         ]);
     }
 
@@ -32,6 +34,7 @@ class AccountSettings extends Controller
      */
     public function updateBasicInfo(Request $request)
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
 
         $request->validate([
@@ -54,6 +57,7 @@ class AccountSettings extends Controller
      */
     public function updateContact(Request $request)
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
 
         $request->validate([
@@ -74,6 +78,7 @@ class AccountSettings extends Controller
      */
     public function updateAddress(Request $request)
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
 
         $request->validate([
@@ -100,6 +105,7 @@ class AccountSettings extends Controller
      */
     public function updatePassword(Request $request)
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
 
         $request->validate([

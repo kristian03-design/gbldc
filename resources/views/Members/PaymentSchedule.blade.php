@@ -290,7 +290,9 @@
     </div>
     <div>
       <div class="profile-name">{{ $fist_name }} {{ $last_name }}</div>
-      <div class="profile-email">{{ $email }}</div>
+      <div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 600; color: #d1fae5; border: 1px solid rgba(255, 255, 255, 0.15); letter-spacing: 0.03em;">
+        <i data-lucide="id-card" style="width: 12px; height: 12px; opacity: 0.9;"></i> {{$member_id}}
+      </div>
     </div>
   </div>
 
@@ -303,6 +305,12 @@
     </a>
     <a href="{{ route('Member.Check.Loan.Status') }}" class="nav-item">
       <i data-lucide="search"></i> Check Loan Status
+    </a>
+    <a href="{{ route('Member.Check.Shared.Capital') }}" class="nav-item">
+      <i data-lucide="piggy-bank"></i> Check Shared Capital
+    </a>
+    <a href="{{ route('Member.Notifications') }}" class="nav-item">
+      <i data-lucide="bell"></i> Notification
     </a>
     <a href="{{ route('Member.ContactUs') }}" class="nav-item">
       <i data-lucide="mail"></i> Contact Us
@@ -360,7 +368,14 @@
       $upcomingCount = 0;
       $totalCount    = 0;
 
-      if ($scheduleData && isset($scheduleData['months'])) {
+      if ($type === 'loan' && $scheduleData) {
+        foreach ($scheduleData as $m) {
+          $totalCount++;
+          if ($m->status === 'paid')   $paidCount++;
+          elseif ($m->status === 'overdue') $overdueCount++;
+          else                     $upcomingCount++;
+        }
+      } elseif ($type !== 'loan' && $scheduleData && isset($scheduleData['months'])) {
         foreach ($scheduleData['months'] as $m) {
           $totalCount++;
           if ($m['paymentMade'])   $paidCount++;
@@ -476,7 +491,39 @@
     $activeData = $type === 'loan' ? ($loanScheduleData ?? null) : ($sharedCapitalScheduleData ?? null);
   @endphp
 
-  @if($activeData && isset($activeData['months']))
+  @if($type === 'loan' && $activeData)
+    @foreach($activeData as $schedule)
+      @php
+        $dateStr = $schedule->due_date->format('Y-m-d');
+        $amount = number_format($schedule->monthly_payment + $schedule->penalty, 2);
+      @endphp
+      @if($schedule->status === 'paid')
+        events.push({
+          title: '✓ Paid ₱{{$amount}}',
+          start: '{{ $dateStr }}',
+          backgroundColor: '#16a34a',
+          borderColor: '#16a34a',
+          extendedProps: { status: 'paid', amount: '{{$amount}}' }
+        });
+      @elseif($schedule->status === 'overdue')
+        events.push({
+          title: '⚠ Overdue ₱{{$amount}}',
+          start: '{{ $dateStr }}',
+          backgroundColor: '#dc2626',
+          borderColor: '#dc2626',
+          extendedProps: { status: 'overdue', amount: '{{$amount}}' }
+        });
+      @else
+        events.push({
+          title: '◷ Due ₱{{$amount}}',
+          start: '{{ $dateStr }}',
+          backgroundColor: '#2563eb',
+          borderColor: '#2563eb',
+          extendedProps: { status: 'upcoming', amount: '{{$amount}}' }
+        });
+      @endif
+    @endforeach
+  @elseif($type !== 'loan' && $activeData && isset($activeData['months']))
     @foreach($activeData['months'] as $monthData)
       @php
         // Build a date string for the payment due day (default to 1st of month)
@@ -511,7 +558,7 @@
     @endforeach
   @endif
 
-  @if($activeData && isset($activeData['paymentDays']))
+  @if($type !== 'loan' && $activeData && isset($activeData['paymentDays']))
     @foreach($activeData['paymentDays'] as $pd)
       @if($pd['isPaymentDay'])
         @php

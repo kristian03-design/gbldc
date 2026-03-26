@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactUsMessage;
 
 class ContactUs extends Controller
 {
@@ -12,6 +14,7 @@ class ContactUs extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
         
         return view('Members.ContactUs', [
@@ -21,6 +24,7 @@ class ContactUs extends Controller
             'last_name' => $user->last_name,
             'email' => $user->email,
             'gender' => $user->gender,
+            'member_id' => $user->member_id,
         ]);
     }
 
@@ -34,10 +38,25 @@ class ContactUs extends Controller
             'message' => 'required|string',
         ]);
 
-        // In a real application, you would save this to a database 
-        // or send an email to the admin
-        // For now, we'll just redirect with a success message
-        
-        return redirect()->route('Member.ContactUs')->with('success', 'Your message has been sent successfully! We will get back to you soon.');
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+
+        $memberName = trim($user->first_name . ' ' . ($user->middle_name ?? '') . ' ' . $user->last_name);
+        $memberEmail = $user->email;
+
+        $adminAddress = config('mail.from.address', 'gbldccoop@gmail.com');
+
+        Mail::to($adminAddress)->send(
+            new ContactUsMessage(
+                memberName: $memberName,
+                memberEmail: $memberEmail,
+                subjectLine: $request->subject,
+                body: $request->message,
+            )
+        );
+
+        return redirect()
+            ->route('Member.ContactUs')
+            ->with('success', 'Your message has been sent successfully! Our admin team will review it and get back to you soon.');
     }
 }

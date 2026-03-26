@@ -1399,14 +1399,16 @@
       return;
     }
     const annualRate = getAnnualRateForAmount(principal);
-    const r = annualRate / 100;
-    const totalDue = principal * Math.pow(1 + r / 12, term);
-    const totalInterest = totalDue - principal;
+    const r = (annualRate / 100) / 12;
+    // Diminishing Interest (Equal Principal) Formula
+    const totalInterest = principal * r * (term + 1) / 2;
+    const totalDue = principal + totalInterest;
     const monthly = totalDue / term;
     document.getElementById('res-rate').textContent = annualRate.toFixed(1) + '% p.a.';
     document.getElementById('res-interest').textContent = fmt(totalInterest);
     document.getElementById('res-total').textContent    = fmt(totalDue);
     document.getElementById('res-monthly').textContent  = fmt(monthly);
+    document.getElementById('dueAmount').value = totalDue.toFixed(2);
   }
   function applyComputation() {
     const raw = document.getElementById('res-total').textContent;

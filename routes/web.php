@@ -3,15 +3,13 @@
 use App\Http\Controllers\LoanPaymentHistoryReview;
 use App\Http\Controllers\Otp;
 use App\Models\SharedCapital;
+
 // Guest
-
 use App\Http\Controllers\cooplist;
-
 use App\Http\Controllers\Loginbtn;
 use App\Http\Controllers\register;
 use App\Http\Controllers\OTPsubmit;
 use App\Http\Controllers\AcceptLoan;
-
 use App\Http\Controllers\adminlogin;
 use App\Http\Controllers\FindMember;
 use App\Http\Controllers\reviewpage;
@@ -22,8 +20,6 @@ use App\Http\Controllers\loanRecords;
 use App\Http\Controllers\MemberLogin;
 use App\Http\Controllers\PaymentPage;
 use Illuminate\Support\Facades\Route;
-
-// Loan Page
 use App\Http\Controllers\managemember;
 use App\Http\Controllers\registration;
 use App\Http\Controllers\loanDashboard;
@@ -34,19 +30,10 @@ use App\Http\Controllers\MemberListPage;
 use App\Http\Controllers\MemberLoginBtn;
 use App\Http\Controllers\ViewPastRecord;
 use App\Http\Controllers\AddTransactions;
-
-
-
-
-
 use App\Http\Controllers\admincreatestaff;
 use App\Http\Controllers\LoanApplication1;
 use App\Http\Controllers\ViewLoanAppFulll;
 use App\Http\Controllers\AdminRegisMessege;
-
-
-
-// to be change
 use App\Http\Controllers\ApproveOrRejected;
 use App\Http\Controllers\MemberLandingPage;
 use App\Http\Controllers\redirectToLoanApp;
@@ -82,176 +69,197 @@ use App\Http\Controllers\ZipLookupController;
 use App\Http\Controllers\MemberPasswordSetupController;
 use App\Http\Controllers\MemberPasswordResetController;
 use App\Http\Controllers\AdminSettingsController;
+use App\Http\Controllers\CreateAdmin;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NewsAndEventsController;
+use App\Http\Controllers\UnderConstructionController;
+use App\Http\Controllers\WebContentController;
 
 
+/* |-------------------------------------------------------------------------- | Guest Routes |-------------------------------------------------------------------------- */
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/GBLDC', [LandingPage::class , 'Landing'])->name('Landing.Page');
+Route::get('/Loans', [LandingPage::class , 'LoanPage'])->name('Guest.Loans');
+Route::get('/About-Us', [LandingPage::class , 'AboutUs'])->name('Guest.AboutUs');
+Route::get('/News-Events', [LandingPage::class , 'NewsEvents'])->name('Guest.NewsEvents');
+Route::get('/Testimonials', [LandingPage::class , 'Testimonials'])->name('Guest.Testimonials');
+Route::get('/Legal-Policies', [LandingPage::class , 'Policies'])->name('Guest.Policies');
+Route::get('/Membership-Registration', [registration::class , 'registration_page1'])->name('Registration.form1');
+Route::get('/Under-Construction', [loanDashboard::class , 'underConstruction'])->name('Under.Construction');
 
-// Guest Routes
-Route::get('/GBLDC', [LandingPage::class,'Landing'])->name('Landing.Page');
-// Registration Form
-Route::get('/Membership-Registration', [registration::class,'registration_page1'])->name('Registration.form1');
+Route::post('/Registration-Processing', [registrationpage1::class , 'registrationpage1'])->name('registration.Processing');
+Route::post('/Registration-submit', [register::class , 'Register'])->name('Registration.submit');
 
-Route::post('/Registration-Processing', [registrationpage1::class,'registrationpage1'])->name('registration.Processing');
-Route::get('/Registration-Success', [registrationmessege::class,'messege'])->name('registration.messege');
-
-// ZIP lookup (City/Municipality → Zip Code)
-Route::get('/zip-lookup', [ZipLookupController::class, 'lookup'])->name('zip.lookup');
+Route::get('/Registration-Success', [registrationmessege::class , 'messege'])->name('registration.messege');
+Route::get('/zip-lookup', [ZipLookupController::class , 'lookup'])->name('zip.lookup');
 
 
-Route::post('/Registration-submit', [register::class,'Register'] )->name('Registration.submit');
+/* |-------------------------------------------------------------------------- | Admin Auth Routes |-------------------------------------------------------------------------- */
+
+Route::get('/Login-Page', [adminlogin::class , 'adminlogin'])->name('Admin.Login');
+Route::post('/Login-button', [Loginbtn::class , 'Login'])->name('Login.Btn');
+Route::get('/OTP', [Otp::class , 'OTPpage'])->name('Otp.Page');
+Route::post('/OTP-Confirm', [OTPsubmit::class , 'ConfirmOTP'])->name('OTP.Confirm');
+Route::post('/OTP-Resend', [Otp::class , 'resendOTP'])->name('OTP.Resend');
+Route::get('/Admin-Logout', [LogoutController::class , 'adminLogout'])->name('Admin.Logout');
 
 
-// Admin Login
-Route::post('Login-button', [Loginbtn::class,'Login'])->name('Login.Btn');
-Route::get('/OTP', [Otp::class,'OTPpage'])->name('Otp.Page');
-Route::post('/OTP-Confirm', [OTPsubmit::class,'ConfirmOTP'])->name('OTP.Confirm');
-Route::post('/OTP-Resend', [Otp::class,'resendOTP'])->name('OTP.Resend');
-Route::get('/Login-Page', [adminlogin::class,'adminlogin'])->name('Admin.Login');
-Route::get('/Admin-Logout', [LogoutController::class,'adminLogout'])->name('Admin.Logout');
+/* |-------------------------------------------------------------------------- | Admin Routes (auth:admin) |-------------------------------------------------------------------------- */
 
-// Admin Routes
 Route::middleware(['auth:admin'])->group(function () {
 
-Route::get('/Admin-Dashboards', [admindashboard::class,'adminDashboard'])->name('Admin.dashboard');
-Route::post('/Admin-Upload-QR', [UploadQRController::class,'upload'])->name('admin.upload.qr');
-Route::get('/Admin-Manage', [adminmanage::class,'adminmanage'])->name('Admin.manage');
-Route::get('/Admin-Settings', [AdminSettingsController::class,'show'])->name('Admin.Settings');
-Route::post('/Admin-Settings/Profile', [AdminSettingsController::class,'updateProfile'])->name('Admin.Settings.Profile');
-Route::post('/Admin-Settings/Password', [AdminSettingsController::class,'updatePassword'])->name('Admin.Settings.Password');
-Route::get('/Admin-Create-Staff', [admincreatestaff::class,'AdminCreate'])->name('Admin.form');
-Route::post('/Admin-Create-Success', [createstaff::class,'createstaff'])->name('Create.staff');
-Route::get('/Admin-Loan-Application-List', [cooplist::class,'List'])->name('LoanApp.list');
+    // Dashboard & Settings
+    Route::get('/Admin-Dashboards', [admindashboard::class , 'adminDashboard'])->name('Admin.dashboard');
+    
+    // Web Content Management
+    Route::get('/Admin-Web-Content', [WebContentController::class, 'index'])->name('Admin.WebContent');
+    Route::post('/Admin-Web-Content/Store', [WebContentController::class, 'store'])->name('Admin.WebContent.Store');
+    Route::put('/Admin-Web-Content/Update/{id}', [WebContentController::class, 'update'])->name('Admin.WebContent.Update');
+    Route::delete('/Admin-Web-Content/Destroy/{id}', [WebContentController::class, 'destroy'])->name('Admin.WebContent.Destroy');
+    Route::post('/Admin-Upload-QR', [UploadQRController::class , 'upload'])->name('admin.upload.qr');
+    Route::get('/Admin-Manage', [adminmanage::class , 'adminmanage'])->name('Admin.manage');
+    Route::get('/Admin-Settings', [AdminSettingsController::class , 'show'])->name('Admin.Settings');
+    Route::post('/Admin-Settings/Profile', [AdminSettingsController::class , 'updateProfile'])->name('Admin.Settings.Profile');
+    Route::post('/Admin-Settings/Password', [AdminSettingsController::class , 'updatePassword'])->name('Admin.Settings.Password');
+    Route::get('/Admin-Create-Staff', [admincreatestaff::class , 'AdminCreate'])->name('Admin.form');
+    Route::post('/Admin-Create-Success', [createstaff::class , 'createstaff'])->name('Create.staff');
 
-Route::get('/Manage-Member', [managemember::class,'managemember'])->name('Manage.Members');
-Route::get('/Admin-Member-Registration-Form', [AdminMemberRegistrationForm::class,'AdminMemberRegisForm'])->name('Add.New.Member');
-Route::post('Admin-Submit-Member-Registration-Form', [AdminSubmitMemberRegisForm::class,'AdminSubmitRegisMemForm'])->name('Admin.Submit.Mem.Regis');
-Route::get('/Admin-Regitration-Success-Messege', [AdminRegisMessege::class,'AdminRegisMessege'])->name('Admin.Regis.Messege');
-Route::post('/Approve', [ApproveOrRejected::class,'ApproveOrRejected'])->name('Approve.member');
-Route::post('/Reject', [ApproveOrRejected::class,'Reject'])->name('Reject.member');
-Route::get('/Redirect-View-Membership-Form/{id}', [redirectMemberForm::class,'redirectMF'])->name('redirect.Membershipform');
-Route::get('/View-Membership-Form', [viewmembershipform::class,'ViewMF'])->name('Membership.Form');
-Route::get('/Loan-Payment-History',[loanpaymenthistory::class,'LoanPH'])->name('History.LP');
-Route::get('/Loan-Payment-History/{loan_number}',[loanpaymenthistory::class,'LoanPH'])->name('Loan.Payment.History');
-Route::get('/Loan-Payment-History-Detail/{loan_number}',[loanpaymenthistory::class,'LoanPHDetail'])->name('Loan.Payment.History.Detail');
-Route::get('/receipt/{id}',[loanpaymenthistory::class,'viewReceipt'])->name('view_receipt');
-Route::get('/details/{id}',[loanpaymenthistory::class,'viewDetails'])->name('view_details');
+    // Loan Applications
+    Route::get('/Admin-Loan-Application-List', [cooplist::class , 'List'])->name('LoanApp.list');
+    Route::get('/Review-Loan-Application/{id}', [ViewLoanAppFulll::class , 'ViewFullLoanApp'])->name('Review.LoanApp');
+    Route::post('/Accept-Loan', [AcceptLoan::class , 'SaveLoan'])->name('Loan.Approval');
+    Route::post('/Admin-Loan-Reject', [LoanApplicationSubmit::class , 'rejectLoan'])->name('Admin.Loan.Reject');
+    Route::post('/Admin-Loan-Notify-Revision', [LoanApplicationSubmit::class , 'notifyRevision'])->name('Admin.Loan.NotifyRevision');
+    Route::get('/Loan-Receipt/{id}', [ViewLoanReceipt::class , 'ViewLoanReceipt'])->name('View.Loan.Receipt');
 
-// Member list
-Route::get('/Member-List', [MemberListPage::class,'MemberList'])->name('Member.List');
-Route::get('/View-Member-Details/{member_id}', [ViewMemberDetails::class,'viewDetails'])->name('View.Member.Details');
+    // Member Management
+    Route::get('/Manage-Member', [managemember::class , 'managemember'])->name('Manage.Members');
+    Route::get('/Admin-Member-Registration-Form', [AdminMemberRegistrationForm::class , 'AdminMemberRegisForm'])->name('Add.New.Member');
+    Route::post('/Admin-Submit-Member-Registration-Form', [AdminSubmitMemberRegisForm::class , 'AdminSubmitRegisMemForm'])->name('Admin.Submit.Mem.Regis');
+    Route::get('/Admin-Regitration-Success-Messege', [AdminRegisMessege::class , 'AdminRegisMessege'])->name('Admin.Regis.Messege');
+    Route::post('/Approve', [ApproveOrRejected::class , 'ApproveOrRejected'])->name('Approve.member');
+    Route::post('/Reject', [ApproveOrRejected::class , 'Reject'])->name('Reject.member');
+    Route::get('/Redirect-View-Membership-Form/{id}', [redirectMemberForm::class , 'redirectMF'])->name('redirect.Membershipform');
+    Route::get('/View-Membership-Form', [viewmembershipform::class , 'ViewMF'])->name('Membership.Form');
+    Route::get('/Member-List', [MemberListPage::class , 'MemberList'])->name('Member.List');
+    Route::get('/View-Member-Details/{member_id}', [ViewMemberDetails::class , 'viewDetails'])->name('View.Member.Details');
 
-// Shared Capital List
-Route::get('/Shared-Capital-List', [SharedCapitalList::class,'ViewSharedCapitalList'])->name('Shared.Capital.List.View');
-Route::get('/View-Shared-Capital-Details/{member_id}', [SharedCapitalList::class,'viewSharedCapitalDetails'])->name('View.Shared.Capital.Details');
-Route::get('/View-Shared-Capital-History/{member_id}', [SharedCapitalPaymentHistory::class,'ViewSHPH'])->name('View.SCP.History');
-Route::post('/Mark-Shared-Capital-Fully-Paid/{member_id}', [SharedCapitalList::class,'markFullyPaid'])->name('Mark.Shared.Capital.Fully.Paid');
-Route::get('/View-Shared-Capital-Payment-History-Detail/{member_id}', [SharedCapitalPaymentHistory::class,'ViewSHPHDetail'])->name('View.SCP.History.Detail');
-Route::get('/shared-capital-receipt/{id}',[SharedCapitalPaymentHistory::class,'viewReceipt'])->name('shared_capital_receipt');
-Route::get('/View-Shared-Capital-Record/{id}', [ViewSharedCapitalRecord::class,'ViewSCRecord'])->name('View.SC.Record');
+    // Shared Capital
+    Route::get('/Shared-Capital-List', [SharedCapitalList::class , 'ViewSharedCapitalList'])->name('Shared.Capital.List.View');
+    Route::get('/View-Shared-Capital-Details/{member_id}', [SharedCapitalList::class , 'viewSharedCapitalDetails'])->name('View.Shared.Capital.Details');
+    Route::get('/View-Shared-Capital-History/{member_id}', [SharedCapitalPaymentHistory::class , 'ViewSHPH'])->name('View.SCP.History');
+    Route::post('/Mark-Shared-Capital-Fully-Paid/{member_id}', [SharedCapitalList::class , 'markFullyPaid'])->name('Mark.Shared.Capital.Fully.Paid');
+    Route::get('/View-Shared-Capital-Payment-History-Detail/{member_id}', [SharedCapitalPaymentHistory::class , 'ViewSHPHDetail'])->name('View.SCP.History.Detail');
+    Route::get('/shared-capital-receipt/{id}', [SharedCapitalPaymentHistory::class , 'viewReceipt'])->name('shared_capital_receipt');
+    Route::get('/View-Shared-Capital-Record/{id}', [ViewSharedCapitalRecord::class , 'ViewSCRecord'])->name('View.SC.Record');
 
-// Add Transactions
-Route::get('/Add-Transactions', [AddTransactions::class,'Transaction'])->name('Add.Transactions');
-Route::get('/Find-Member', [FindMember::class,'findMember'])->name('Find.Member');
-Route::post('/Find-Member', [FindMember::class,'findMemberPost'])->name('Find.Member.Post');
-Route::post('/Find-Member-For-Loan', [FindMember::class,'findMemberForLoan'])->name('Find.Member.For.Loan');
-Route::get('/Admin-Create-Loan/{member_id}', [LoanApplication1::class,'AdminLoanApplication'])->name('Admin.Create.Loan');
-Route::post('/Admin-Loan-Submit', [LoanApplicationSubmit::class,'LoanAppSubmit'])->name('Admin.Loan.Submit');
-Route::get('/Admin-Loan-Messege', [LoanAppConfirmation::class,'LoanConfirmation'])->name('Admin.Loan.Messege');
-Route::get('/Admin-Shared-Capital-Form', [CreateSharedCapital::class,'ShareCapitalRecord'])->name('Shared.Capital.Form');
-Route::post('/Save-Shared-Capital-Record', [SaveSharedCapitalRecord::class,'save'])->name('Save.Shared.Capital');
+    // Transactions
+    Route::get('/Add-Transactions', [AddTransactions::class , 'Transaction'])->name('Add.Transactions');
+    Route::get('/Find-Member', [FindMember::class , 'findMember'])->name('Find.Member');
+    Route::post('/Find-Member', [FindMember::class , 'findMemberPost'])->name('Find.Member.Post');
+    Route::post('/Find-Member-For-Loan', [FindMember::class , 'findMemberForLoan'])->name('Find.Member.For.Loan');
+    Route::get('/Admin-Create-Loan/{member_id}', [LoanApplication1::class , 'AdminLoanApplication'])->name('Admin.Create.Loan');
+    Route::post('/Admin-Loan-Submit', [LoanApplicationSubmit::class , 'LoanAppSubmit'])->name('Admin.Loan.Submit');
+    Route::get('/Admin-Loan-Messege', [LoanAppConfirmation::class , 'LoanConfirmation'])->name('Admin.Loan.Messege');
+    Route::get('/Admin-Shared-Capital-Form', [CreateSharedCapital::class , 'ShareCapitalRecord'])->name('Shared.Capital.Form');
+    Route::post('/Save-Shared-Capital-Record', [SaveSharedCapitalRecord::class , 'save'])->name('Save.Shared.Capital');
 
-// Loan
-Route::get('/Review-Loan-Application/{id}', [ViewLoanAppFulll::class,'ViewFullLoanApp'])->name('Review.LoanApp');
-Route::get('/Member-Past-Record/{member_id}/{type?}', [RedirectToLastRecord::class,'LastRecord'])->name('Check.Last.Record');
-Route::get('Review-Past-Record/{id}', [ViewPastRecord::class,'view'])->name('Review.Past.Record');
-Route::post('/Accept-Loan', [AcceptLoan::class,'SaveLoan'])->name('Loan.Approval');
-Route::get('/Loan-Receipt/{id}', [ViewLoanReceipt::class,'ViewLoanReceipt'])->name('View.Loan.Receipt');
+    // Loan Records
+    Route::get('/Loan-Records', [loanRecords::class , 'loans'])->name('Loan.Records');
+    Route::get('/View-Loan-Record/{loan_number}', [viewMemberLoan::class , 'view'])->name('View.Member.Loan');
+    Route::get('/Update-Loan-Record/{loan_number}', [UpdateLoanRecord::class , 'updateRecord'])->name('Update.Record');
+    Route::post('/Mark-Loan-Finished/{loan_number}', [UpdateLoanRecord::class , 'markFinished'])->name('Mark.Loan.Finished');
+    Route::get('/Member-Past-Record/{member_id}/{type?}', [RedirectToLastRecord::class , 'LastRecord'])->name('Check.Last.Record');
+    Route::get('/Review-Past-Record/{id}', [ViewPastRecord::class , 'view'])->name('Review.Past.Record');
 
-Route::get('/Loan-Records', [loanRecords::class,'loans'])->name('Loan.Records');
-Route::get('/View-Loan-Record/{loan_number}', [viewMemberLoan::class,'view'])->name('View.Member.Loan');
+    // Loan Payment History
+    Route::get('/Loan-Payment-History', [loanpaymenthistory::class , 'LoanPH'])->name('History.LP');
+    Route::get('/Loan-Payment-History/{loan_number}', [loanpaymenthistory::class , 'LoanPH'])->name('Loan.Payment.History');
+    Route::get('/Loan-Payment-History-Detail/{loan_number}', [loanpaymenthistory::class , 'LoanPHDetail'])->name('Loan.Payment.History.Detail');
+    Route::get('/receipt/{id}', [loanpaymenthistory::class , 'viewReceipt'])->name('view_receipt');
+    Route::get('/details/{id}', [loanpaymenthistory::class , 'viewDetails'])->name('view_details');
 
-Route::get('/Update-Loan-Record/{loan_number}', [UpdateLoanRecord::class,'updateRecord'])->name('Update.Record');
-Route::post('/Mark-Loan-Finished/{loan_number}', [UpdateLoanRecord::class,'markFinished'])->name('Mark.Loan.Finished');
+    // Payment
+    Route::get('/Payment', [PaymentPage::class , 'Payment'])->name('Payment.Page');
+    Route::post('/Payment-Submit', [SubmitPayment::class , 'pay'])->name('Payment.Submit');
+    Route::get('/member/lookup', [PaymentPage::class , 'memberLookup'])->name('Member.Lookup');
 
-
-
-//Payment
-Route::get('/Loan-Records', [loanRecords::class,'loans'])->name('Loan.Records');
-Route::get('/View-Loan-Record/{loan_number}', [viewMemberLoan::class,'view'])->name('View.Member.Loan');
-
-
-
-//Payment
-Route::get('/Payment', [PaymentPage::class,'Payment'])->name('Payment.Page');
-Route::post('/Payment-Submit', [SubmitPayment::class,'pay'])->name('Payment.Submit');
-Route::get('/member/lookup', [PaymentPage::class, 'memberLookup'])->name('Member.Lookup');
-
-
-// PayMongo GCash Payment
-Route::get('/paymongo/gcash', [PayMongoController::class, 'showGcashPage'])->name('paymongo_gcash_page');
-Route::post('/paymongo/gcash/initiate', [PayMongoController::class, 'initiateGcashPayment'])->name('paymongo_gcash_initiate');
-Route::get('/paymongo/success', [PayMongoController::class, 'handlePaymentSuccess'])->name('paymongo_success');
-Route::get('/paymongo/failed', [PayMongoController::class, 'handlePaymentFailed'])->name('paymongo_failed');
-
-// Manual GCash Payment Entry
-Route::get('/paymongo/manual-gcash', [PayMongoController::class, 'showManualGcashPage'])->name('manual_gcash_page');
-Route::post('/paymongo/manual-gcash/submit', [PayMongoController::class, 'submitManualGcashPayment'])->name('manual_gcash_submit');
-
-
-
+    // PayMongo
+    Route::get('/paymongo/gcash', [PayMongoController::class , 'showGcashPage'])->name('paymongo_gcash_page');
+    Route::post('/paymongo/gcash/initiate', [PayMongoController::class , 'initiateGcashPayment'])->name('paymongo_gcash_initiate');
+    Route::get('/paymongo/success', [PayMongoController::class , 'handlePaymentSuccess'])->name('paymongo_success');
+    Route::get('/paymongo/failed', [PayMongoController::class , 'handlePaymentFailed'])->name('paymongo_failed');
+    Route::get('/paymongo/manual-gcash', [PayMongoController::class , 'showManualGcashPage'])->name('manual_gcash_page');
+    Route::post('/paymongo/manual-gcash/submit', [PayMongoController::class , 'submitManualGcashPayment'])->name('manual_gcash_submit');
 });
 
 
+/* |-------------------------------------------------------------------------- | Member Auth Routes |-------------------------------------------------------------------------- */
 
-// Member Login
-Route::get('/Member-Login', [MemberLogin::class,'MemberLoginPage'])->name('Member.Login');
-Route::post('/Member-Login-Submit', [MemberLoginBtn::class,'MemberLoginBtn'])->name('Member.LoginBtn');
-Route::get('/Member-Forgot-Password', [MemberPasswordResetController::class, 'showForgot'])->name('Member.ForgotPassword');
-Route::post('/Member-Forgot-Password', [MemberPasswordResetController::class, 'sendResetLink'])->name('Member.ForgotPassword.Send');
-Route::get('/Member-Reset-Password/{token}', [MemberPasswordResetController::class, 'showReset'])->name('Member.ResetPassword');
-Route::post('/Member-Reset-Password', [MemberPasswordResetController::class, 'reset'])->name('Member.ResetPassword.Save');
-Route::get('/Member-OTP', [memberOTPpage::class,'MemberOTP'])->name('Member.OTPpage');
-Route::post('/Member-OTP-Confirm', [MemberOTPVerify::class,'verifyMemberOTP'])->name('Member.OTP.Confirm');
-Route::post('/Member-OTP-Resend', [memberOTPpage::class,'resendMemberOTP'])->name('Member.OTP.Resend');
+Route::get('/Member-Login', [MemberLogin::class , 'MemberLoginPage'])->name('Member.Login');
+Route::post('/Member-Login-Submit', [MemberLoginBtn::class , 'MemberLoginBtn'])->name('Member.LoginBtn');
+Route::get('/Member-Forgot-Password', [MemberPasswordResetController::class , 'showForgot'])->name('Member.ForgotPassword');
+Route::post('/Member-Forgot-Password', [MemberPasswordResetController::class , 'sendResetLink'])->name('Member.ForgotPassword.Send');
+Route::get('/Member-Reset-Password/{token}', [MemberPasswordResetController::class , 'showReset'])->name('Member.ResetPassword');
+Route::post('/Member-Reset-Password', [MemberPasswordResetController::class , 'reset'])->name('Member.ResetPassword.Save');
+Route::get('/Member-OTP', [memberOTPpage::class , 'MemberOTP'])->name('Member.OTPpage');
+Route::post('/Member-OTP-Confirm', [MemberOTPVerify::class , 'verifyMemberOTP'])->name('Member.OTP.Confirm');
+Route::post('/Member-OTP-Resend', [memberOTPpage::class , 'resendMemberOTP'])->name('Member.OTP.Resend');
 
-// Member Routes
+
+/* |-------------------------------------------------------------------------- | Member Routes (auth:officialmember) |-------------------------------------------------------------------------- */
+
 Route::middleware(['auth:officialmember'])->group(function () {
-Route::get('/Member-Set-Password', [MemberPasswordSetupController::class, 'show'])->name('Member.Password.Set');
-Route::post('/Member-Set-Password', [MemberPasswordSetupController::class, 'save'])->name('Member.Password.Set.Save');
 
-Route::middleware(['must_change_password'])->group(function () {
-Route::get('/Member-Landing-Page', [MemberLandingPage::class,'MemberLP'])->name('Member.Landing');
-Route::get('/Redirecting-to-Loan-Application', [redirectToLoanApp::class,'RedirectToLoanApp'])->name('Redirecting.LoanApp');
-Route::get('/Loan-Application', [LoanApplication1::class,'LoanApplication1'])->name('Loan.App');
-Route::get('/Loan-Application-Review', [reviewpage::class,'ViewReviewPage'])->name('Display.Review');
-Route::post('/Loan-Application-submit', [LoanApplicationSubmit::class,'LoanAppSubmit'])->name('Loan.Submit');
-Route::get('/Loan-Application-Messege', [LoanAppConfirmation::class,'LoanConfirmation'])->name('Loan.Messege');
-Route::post('/Redirect-Back-to-Dashboard', [LoanAppConfirmationRedirectBack::class,'redirectBack'])->name('Goto.Dashboard');
-// loan
-Route::get('/GBLDC-Member-Loan-Dashboard', [loanDashboard::class,'view'])->name('Loan.Dashboard');
-Route::get('/Payment-Schedule/{type?}', [loanDashboard::class,'paymentSchedule'])->name('Payment.Schedule');
-Route::get('/Member-Loan-History', [loanDashboard::class,'loanHistory'])->name('Member.Loan.History');
-Route::get('/Full-Payment-History', [loanDashboard::class,'fullPaymentHistory'])->name('Full.Payment.History');
-Route::get('/Under-Construction', [loanDashboard::class,'underConstruction'])->name('Under.Construction');
-Route::get('/Check-Loan-Status', [loanDashboard::class,'checkLoanStatus'])->name('Member.Check.Loan.Status');
-Route::get('/Member-Logout', [LogoutController::class,'memberLogout'])->name('Member.Logout');
+    Route::get('/Member-Set-Password', [MemberPasswordSetupController::class , 'show'])->name('Member.Password.Set');
+    Route::post('/Member-Set-Password', [MemberPasswordSetupController::class , 'save'])->name('Member.Password.Set.Save');
 
-// Account Settings
-Route::get('/Member-Account-Settings', [AccountSettings::class,'index'])->name('Member.AccountSettings');
-Route::put('/Member-Account-Settings-Basic', [AccountSettings::class,'updateBasicInfo'])->name('Member.AccountSettings.UpdateBasic');
-Route::put('/Member-Account-Settings-Contact', [AccountSettings::class,'updateContact'])->name('Member.AccountSettings.UpdateContact');
-Route::put('/Member-Account-Settings-Password', [AccountSettings::class,'updatePassword'])->name('Member.AccountSettings.UpdatePassword');
-Route::put('/Member-Account-Settings-Address', [AccountSettings::class,'updateAddress'])->name('Member.AccountSettings.UpdateAddress');
+    Route::middleware(['must_change_password'])->group(function () {
 
-// Contact Us
-Route::get('/Member-Contact-Us', [ContactUs::class,'index'])->name('Member.ContactUs');
-Route::post('/Member-Contact-Us-Submit', [ContactUs::class,'submit'])->name('Member.ContactUs.Submit');
+            // Landing & Info Pages
+            Route::get('/Member-Landing-Page', [MemberLandingPage::class , 'MemberLP'])->name('Member.Landing');
+            Route::get('/Member-About-Us', [MemberLandingPage::class , 'AboutUs'])->name('Member.AboutUs');
+            Route::get('/Member-Loans', [MemberLandingPage::class , 'MemberLoanPage'])->name('Member.Loans');
+            Route::get('/Member-News-Events', [MemberLandingPage::class , 'NewsEvents'])->name('Member.NewsEvents');
+            Route::get('/Member-Testimonials', [MemberLandingPage::class , 'Testimonials'])->name('Member.Testimonials');
 
-// FAQ
-Route::get('/Member-FAQ', [FAQController::class,'index'])->name('Member.FAQ');
-});
-});
+            // Loan Application
+            Route::get('/Redirecting-to-Loan-Application', [redirectToLoanApp::class , 'RedirectToLoanApp'])->name('Redirecting.LoanApp');
+            Route::get('/Loan-Application', [LoanApplication1::class , 'LoanApplication1'])->name('Loan.App');
+            Route::get('/Loan-Application-Review', [reviewpage::class , 'ViewReviewPage'])->name('Display.Review');
+            Route::post('/Loan-Application-submit', [LoanApplicationSubmit::class , 'LoanAppSubmit'])->name('Loan.Submit');
+            Route::get('/Loan-Application-Messege', [LoanAppConfirmation::class , 'LoanConfirmation'])->name('Loan.Messege');
+            Route::post('/Redirect-Back-to-Dashboard', [LoanAppConfirmationRedirectBack::class , 'redirectBack'])->name('Goto.Dashboard');
+
+            // Loan Dashboard
+            Route::get('/GBLDC-Member-Loan-Dashboard', [loanDashboard::class , 'view'])->name('Loan.Dashboard');
+            Route::get('/Payment-Schedule/{type?}', [loanDashboard::class , 'paymentSchedule'])->name('Payment.Schedule');
+            Route::get('/Member-Loan-History', [loanDashboard::class , 'loanHistory'])->name('Member.Loan.History');
+            Route::get('/Full-Payment-History', [loanDashboard::class , 'fullPaymentHistory'])->name('Full.Payment.History');
+            Route::get('/Check-Loan-Status', [loanDashboard::class , 'checkLoanStatus'])->name('Member.Check.Loan.Status');
+            Route::get('/Check-Shared-Capital-Status', [loanDashboard::class , 'checkSharedCapitalStatus'])->name('Member.Check.Shared.Capital');
+
+            // Notifications
+            Route::get('/Member-Notifications', [NotificationController::class , 'index'])->name('Member.Notifications');
+            Route::post('/Member-Notifications/{id}/read', [NotificationController::class , 'markAsRead'])->name('Member.Notifications.Read');
+            Route::get('/Member-Notifications/count', [NotificationController::class , 'countUnread'])->name('Member.Notifications.Count');
+
+            // Account & Support
+            Route::get('/Member-Account-Settings', [AccountSettings::class , 'index'])->name('Member.AccountSettings');
+            Route::put('/Member-Account-Settings-Basic', [AccountSettings::class , 'updateBasicInfo'])->name('Member.AccountSettings.UpdateBasic');
+            Route::put('/Member-Account-Settings-Contact', [AccountSettings::class , 'updateContact'])->name('Member.AccountSettings.UpdateContact');
+            Route::put('/Member-Account-Settings-Password', [AccountSettings::class , 'updatePassword'])->name('Member.AccountSettings.UpdatePassword');
+            Route::put('/Member-Account-Settings-Address', [AccountSettings::class , 'updateAddress'])->name('Member.AccountSettings.UpdateAddress');
+            Route::get('/Member-Contact-Us', [ContactUs::class , 'index'])->name('Member.ContactUs');
+            Route::post('/Member-Contact-Us-Submit', [ContactUs::class , 'submit'])->name('Member.ContactUs.Submit');
+            Route::get('/Member-FAQ', [FAQController::class , 'index'])->name('Member.FAQ');
+
+            // Logout
+            Route::get('/Member-Logout', [LogoutController::class , 'memberLogout'])->name('Member.Logout');
+        }
+        );
+    });

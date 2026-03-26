@@ -12,6 +12,7 @@ class FAQController extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\OfficialMember $user */
         $user = Auth::guard('officialmember')->user();
         
         return view('Members.FAQ', [
@@ -21,6 +22,7 @@ class FAQController extends Controller
             'last_name' => $user->last_name,
             'email' => $user->email,
             'gender' => $user->gender,
+            'member_id' => $user->member_id,
         ]);
     }
 }

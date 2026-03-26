@@ -442,7 +442,7 @@
               <td><span class="amount">₱{{ number_format($Record->payment_amount, 2) }}</span></td>
               <td class="date-cell">{{ date('M d, Y', strtotime($Record->transaction_date)) }}</td>
               <td>
-                <a href="{{route('View.SC.Record', $Record->id)}}" class="action-btn view">
+                <a href="{{route('shared_capital_receipt', $Record->id)}}" class="action-btn view">
                   <i data-lucide="eye"></i> View Details
                 </a>
               </td>

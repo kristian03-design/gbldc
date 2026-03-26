@@ -8,6 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="{{asset('images/logocoop-removebg-preview-2.png')}}">
 
+  @php
+    if(!isset($Record) && isset($payment)) {
+        $Record = $payment;
+    }
+  @endphp
+
   <style>
     :root {
       --forest:    #0d4a2f;
@@ -575,6 +581,7 @@
       </div>
       @endif
 
+      @if(isset($AdminMimeType) && isset($MemberMimeType))
       <!-- Receipt images -->
       <div class="card">
         <div class="card-head">
@@ -601,6 +608,7 @@
           </div>
         </div>
       </div>
+      @endif
 
       <!-- Handler info -->
       <div class="card">

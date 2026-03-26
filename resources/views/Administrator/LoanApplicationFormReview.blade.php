@@ -686,6 +686,24 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 5px; }
 
+    /* ── Confirmation Modals ── */
+    .modal-h { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 6px; font-family: 'Playfair Display', serif; }
+    .modal-p { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 22px; line-height: 1.5; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn {
+      flex: 1; padding: 11px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; text-align: center;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: background .2s, transform .1s; font-family: 'DM Sans', sans-serif;
+    }
+    .modal-btn:active { transform: scale(0.97); }
+    .modal-btn.cancel { background: #f3f4f6; color: var(--ink); }
+    .modal-btn.cancel:hover { background: #e5e7eb; }
+    .modal-btn.danger { background: var(--rose); color: #fff; }
+    .modal-btn.danger:hover { background: #dc2626; }
+    .modal-btn.success { background: var(--emerald); color: #fff; }
+    .modal-btn.success:hover { background: #16a34a; }
+
     /* ── Responsive ── */
     @media (max-width: 800px) {
       :root { --sidebar-w: 0px; }
@@ -1000,9 +1018,17 @@
             <i data-lucide="info"></i>
             Fields marked <strong style="color:var(--rose);">*</strong> are required before approval.
           </span>
-          <button type="submit" class="approve-btn">
-            <i data-lucide="circle-check-big"></i> Approve Loan Application
-          </button>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button type="button" class="approve-btn" style="background:#fee2e2; color:#991b1b; border:1px solid #f87171;" onclick="openRejectModal()">
+              <i data-lucide="x-circle"></i> Reject Application
+            </button>
+            <button type="button" class="approve-btn" style="background:#fff7ed; color:#c2410c; border:1px solid #fdba74;" onclick="openNotifyModal()">
+              <i data-lucide="bell"></i> Send Revision Notification
+            </button>
+            <button type="button" class="approve-btn" onclick="openApproveModal()">
+              <i data-lucide="circle-check-big"></i> Approve Loan Application
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1180,6 +1206,51 @@
     &copy; {{ date('Y') }} Greater Bulacan Livelihood Development Cooperative &mdash; All rights reserved.
   </footer>
 </div><!-- /main -->
+
+<!-- ═══ Reject Modal ═══ -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal" style="max-width: 440px; margin: auto; padding: 32px 24px;">
+    <div style="text-align:center;margin-bottom:12px;">
+      <i data-lucide="alert-circle" style="width:36px;height:36px;color:#ef4444;"></i>
+    </div>
+    <h3 class="modal-h">Reject Application</h3>
+    <p class="modal-p">Are you sure you want to REJECT this loan application? This action cannot be undone and will notify the member immediately.</p>
+    <div class="modal-btns">
+      <button type="button" class="modal-btn cancel" onclick="closeRejectModal()">Cancel</button>
+      <button type="submit" form="approvalForm" formaction="{{ route('Admin.Loan.Reject') }}" formnovalidate class="modal-btn danger">Yes, Reject Loan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Approve Modal ═══ -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal" style="max-width: 440px; margin: auto; padding: 32px 24px;">
+    <div style="text-align:center;margin-bottom:12px;">
+      <i data-lucide="check-circle-2" style="width:36px;height:36px;color:var(--emerald);"></i>
+    </div>
+    <h3 class="modal-h">Approve Application</h3>
+    <p class="modal-p">You are about to approve this loan. Have the due amount and terms been verified properly?</p>
+    <div class="modal-btns">
+      <button type="button" class="modal-btn cancel" onclick="closeApproveModal()">Back</button>
+      <button type="submit" form="approvalForm" class="modal-btn success">Yes, Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Notify Modal ═══ -->
+<div class="modal-overlay" id="notifyModal">
+  <div class="modal" style="max-width: 440px; margin: auto; padding: 32px 24px;">
+    <div style="text-align:center;margin-bottom:12px;">
+      <i data-lucide="bell-ring" style="width:36px;height:36px;color:#f97316;"></i>
+    </div>
+    <h3 class="modal-h">Notify Member of Revisions</h3>
+    <p class="modal-p">This will save your current adjustments (Loan Amount, Term, etc.) to the pending application and send an in-app notification to the member detailing these changes. Proceed?</p>
+    <div class="modal-btns">
+      <button type="button" class="modal-btn cancel" onclick="closeNotifyModal()">Cancel</button>
+      <button type="submit" form="approvalForm" formaction="{{ route('Admin.Loan.NotifyRevision') }}" formnovalidate class="modal-btn success" style="background:#f97316;">Yes, Notify Member</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ History Modal ═══ -->
 <div class="modal-overlay" id="historyModal">
@@ -1501,6 +1572,57 @@
   function viewSharedCapitalHistory() { window.location.href = '{{ route("Check.Last.Record", ["member_id" => $Review->member_id, "type" => "shared_capital"]) }}'; }
   function viewLoanHistory()          { window.location.href = '{{ route("Check.Last.Record", ["member_id" => $Review->member_id, "type" => "loan"]) }}'; }
   document.getElementById('historyModal').addEventListener('click', function(e) { if (e.target === this) closeHistoryModal(); });
+
+  // ── Action Modals (Approve / Reject) ──
+  const approveModal = document.getElementById('approveModal');
+  const rejectModal  = document.getElementById('rejectModal');
+  const notifyModal  = document.getElementById('notifyModal');
+
+  function openApproveModal() {
+    // Manually trigger basic empty validations before opening
+    let valid = true;
+    const form = document.getElementById('approvalForm');
+    form.querySelectorAll('[required]').forEach(f => {
+      if (!f.value.trim()) {
+        valid = false;
+        f.classList.add('err');
+      } else {
+        f.classList.remove('err');
+      }
+    });
+
+    if (!valid) {
+      form.querySelector('.err').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    
+    approveModal.classList.add('open');
+    lucide.createIcons();
+  }
+  function closeApproveModal() { approveModal.classList.remove('open'); }
+
+  function openRejectModal() {
+    rejectModal.classList.add('open');
+    lucide.createIcons();
+  }
+  function closeRejectModal() { rejectModal.classList.remove('open'); }
+
+  function openNotifyModal() {
+    notifyModal.classList.add('open');
+    lucide.createIcons();
+  }
+  function closeNotifyModal() { notifyModal.classList.remove('open'); }
+
+  // Close modals when clicking overlay
+  [approveModal, rejectModal, notifyModal].forEach(modal => {
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('open');
+        }
+      });
+    }
+  });
 </script>
 </body>
 </html>

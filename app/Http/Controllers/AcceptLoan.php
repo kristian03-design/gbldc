@@ -10,6 +10,7 @@ use App\Models\LoanApplication;
 use App\Models\officialmember;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Notification;
 
 class AcceptLoan extends Controller
 {
@@ -78,9 +79,18 @@ class AcceptLoan extends Controller
         $CreateLoan['loan_term'] = $ApplicationRecord['loan_term'];
 
         // Tiered compound interest (Philippines cooperative–inspired): rate by loan amount, monthly compounding
+        // Includes diminishing interest discount based on Paid Shared Capital.
         $principal = (float) $AcceptLoan['loan_amount'];
         $termMonths = LoanInterestService::termToMonths($ApplicationRecord['loan_term'] ?? 12);
-        $tiered = LoanInterestService::tieredCompound($principal, $termMonths);
+
+        $sharedCapital = \App\Models\SharedCapital::where('member_id', $CreateLoan['member_id'])->first();
+        $paidSharedCapital = 0.0;
+        if ($sharedCapital) {
+            $paidSharedCapital = (float)$sharedCapital->shared_capital_amount_balance - (float)$sharedCapital->shared_capital_amount;
+            $paidSharedCapital = max(0, $paidSharedCapital);
+        }
+
+        $tiered = LoanInterestService::tieredCompound($principal, $termMonths, $paidSharedCapital);
         $dueAmount = $tiered['total_due'];
         $interestRate = $tiered['annual_rate'];
 
@@ -126,17 +136,79 @@ class AcceptLoan extends Controller
 
         loan::create($CreateLoan);
         
+        // Generate and save amortization schedule to loan_schedules table
+        try {
+            $frequency = $CreateLoan['frequency_of_payment'];
+            // If the term is 1 Month, and frequency is Daily, we should calculate days
+            // $termPeriods calculation to be sure it matches the frequency
+            $termPeriods = $termMonths;
+            if (strtolower($frequency) == 'daily') {
+                // If the user selects "1 Month" but Daily pay, it means 30 days. Use roughly 30 * months or 365/12
+                $termPeriods = $termMonths * 30; // Approximation for daily pay term per month
+            } elseif (strtolower($frequency) == 'weekly') {
+                $termPeriods = $termMonths * 4; // Approximation for weekly pay term per month
+            }
+
+            $scheduleRows = LoanInterestService::generateAmortizationSchedule(
+                (float) $CreateLoan['loan_amount'],
+                (float) $interestRate,
+                $termPeriods,
+                $CreateLoan['payment_start_date'],
+                $frequency
+            );
+
+            foreach ($scheduleRows as $row) {
+                \App\Models\LoanSchedule::create([
+                    'loan_number' => $CreateLoan['loan_number'],
+                    'member_id' => $CreateLoan['member_id'],
+                    'payment_number' => $row['payment_number'],
+                    'due_date' => $row['due_date'],
+                    'beginning_balance' => $row['beginning_balance'],
+                    'monthly_payment' => $row['monthly_payment'],
+                    'principal_amount' => $row['principal_amount'],
+                    'interest_amount' => $row['interest_amount'],
+                    'remaining_balance' => $row['remaining_balance'],
+                    'penalty' => $row['penalty'],
+                    'status' => 'pending',
+                    'amount_paid' => 0,
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to generate loan schedules: ' . $e->getMessage());
+        }
+
+        // Check if the loan amount was originally requested differently from the granted amount
+        $requestedAmount = (float) $ApplicationRecord['loan_amount'];
+        $grantedAmount = (float) $CreateLoan['loan_amount'];
+        
+        $baseApprovalMessage = 'Congratulations! Your loan application for ₱' . number_format($grantedAmount, 2) . ' has been approved.';
+        $statusMessage = $baseApprovalMessage;
+        
+        if ($requestedAmount !== $grantedAmount) {
+            $statusMessage = 'Your loan application has been approved with a revised amount of ₱' . number_format($grantedAmount, 2) . ' (originally requested: ₱' . number_format($requestedAmount, 2) . ').';
+        }
+
         // Send loan approval notification email
-        $this->sendLoanApprovalNotification($CreateLoan);
+        $this->sendLoanApprovalNotification($CreateLoan, $statusMessage);
         
         $ApplicationRecord->delete();
+
+        // Send Notification to Member
+        Notification::create([
+            'member_id' => $CreateLoan['member_id'],
+            'title' => 'Loan Application Approved',
+            'message' => $statusMessage,
+            'type' => 'loan',
+            'is_read' => false
+        ]);
+
         return redirect()->route('LoanApp.list')->with('success', 'You successfully add new loan.');
     }
     
     /**
      * Send loan approval notification email to member
      */
-    private function sendLoanApprovalNotification($loanData)
+    private function sendLoanApprovalNotification($loanData, $statusMessage)
     {
         // Try to get member email from officialmember table
         $member = officialmember::where('member_id', $loanData['member_id'])->first();
@@ -147,14 +219,15 @@ class AcceptLoan extends Controller
             
             try {
                 Mail::to($email)->send(new \App\Mail\LoanStatusNotification(
-                    $email,
-                    $memberName,
-                    'Approved',
-                    $loanData['loan_number'],
-                    $loanData['loan_amount'],
-                    $loanData['due_amount'],
-                    $loanData['loan_term'],
-                    $loanData['payment_start_date']
+                    $email,                             // $email
+                    $memberName,                        // $memberName
+                    $loanData['loan_number'],           // $loanNumber
+                    $loanData['loan_amount'],           // $loanAmount
+                    'approved',                         // $status (used in blade for color coding)
+                    $statusMessage,                     // $statusMessage
+                    $loanData['due_amount'],            // $dueAmount
+                    $loanData['payment_start_date'],    // $paymentStartDate
+                    $loanData['frequency_of_payment']   // $frequencyOfPayment
                 ));
                 Log::info('Loan approval notification email sent successfully to: ' . $email);
             } catch (\Exception $e) {

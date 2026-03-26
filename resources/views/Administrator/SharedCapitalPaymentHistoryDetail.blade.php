@@ -1,208 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Shared Capital Payment History Detail | GBLDC Admin</title>
-    <link rel="stylesheet" href="output.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment History Detail | GBLDC Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="{{asset('images/logocoop-removebg-preview-2.png')}}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  
-  <!-- ✓ DataTables Core & Responsive CSS -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="icon" type="image/png"
-      href={{asset('images/logocoop-removebg-preview-2.png')}}>
-    <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen">
-    <!-- Header Section -->
-    <header class="bg-white shadow-md fixed left-0 top-0 z-50 w-full">
-      <div
-        class="max-w-7xl mx-auto flex justify-between items-center px-4 py-3 relative">
-        <div class="flex items-center space-x-4">
-          <img src={{asset('images/logocoop-removebg-preview-2.png')}}
-            alt="GBLDC Logo" class="w-12 h-12 object-cover" />
-          <h1 class="text-lg md:text-xl font-semibold text-teal-900">GBLDC Shared Capital Payment History Detail</h1>
-        </div>
-        <div class="relative">
-          <button id="user-menu-button"
-            class="flex items-center gap-3 focus:outline-none">
-            <span
-              class="hidden md:inline text-gray-700 font-medium">Admin</span>
-            <img src={{asset('images/logocoop-removebg-preview-2.png')}}
-              alt="Admin Avatar"
-              class="w-10 h-10 rounded-full border-2 border-green-600 object-cover" />
-            <i class="fas fa-chevron-down text-gray-600 text-sm"></i>
-          </button>
-          <div id="user-menu"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-100 py-2 hidden transition-all duration-200 ease-in-out">
-            <a href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Profile</a>
-            <a href="{{route ('Admin.manage')}}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Manage User</a>
-            <a href="{{ route('Admin.Settings') }}"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition">Settings</a>
-            <div class="border-t my-1 border-gray-200"></div>
-            <a href="{{ route('Admin.Logout') }}"
-              class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition">Logout</a>
-          </div>
-        </div>
-      </div>
-    </header>
-      <main class="pt-28 pb-12 px-4 max-w-7xl mx-auto">
-    <!-- Title -->
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-green-800">Shared Capital Payment History Detail</h2>
-      <p class="text-gray-700">View members payment in shared capital.</p>
-      <a href="{{route('Check.Last.Record', ['member_id' => $FindRecord->first()->member_id ?? '', 'type' => 'shared_capital'])}}" class="inline-flex items-center mt-1 px-3 py-1.5 rounded bg-green-100 text-green-800 hover:bg-green-200 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 shadow-sm mr-3">
-        <i class="fa fa-arrow-left mr-2"></i> Back</a>
-    </div>
-
-    <!-- Table -->
-    <div class="bg-white rounded-xl shadow p-8">
-      <h3 class="text-2xl font-bold text-green-800 mb-6 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2a4 4 0 004 4h2a4 4 0 004-4z" /></svg>
-        Shared Capital Payment History
-      </h3>
-      <div class="overflow-x-auto">
-                  <table 
-            id="loanTable" 
-            class="display responsive nowrap w-full text-sm border border-green-100 rounded-lg my-2"
-          >
-            <thead>
-              <tr class="bg-green-100 text-green-900">
-                <th>Member ID</th>
-                <th>Reference No.</th>
-                <th>Payment Amount</th>
-                <th>Transaction Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($FindRecord as $Record)
-              <tr class="hover:bg-gray-50">
-                <td class="py-2 px-2 border-b border-gray-200">{{$Record->member_id}}</td>
-                <td class="py-2 px-2 border-b border-gray-200">{{$Record->reference_number}}</td>
-                <td class="py-2 px-2 border-b border-gray-200">{{$Record->payment_amount}}</td>
-                <td class="py-2 px-2 border-b border-gray-200">{{$Record->transaction_date}}</td>
-                <td class="py-2 px-2 border-b border-gray-200">
-                  <a
-                    href="{{route ('View.SC.Record', $Record->id)}}"
-                    class="inline-flex items-center px-3 py-1.5 rounded bg-green-50 text-green-700 border border-green-200 hover:bg-green-200 hover:text-green-900 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all shadow-sm mr-2"
-                  >
-                    <i class="fas fa-eye mr-1"></i>View Details
-                  </a>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-
-      </div>
-    </div>
-      </main>
-      <script>
-      const counters = document.querySelectorAll('[data-target]');
-      const animateCounter = (counter) => {
-        const target = +counter.getAttribute('data-target');
-        const duration = 1000; // 1 second
-        const stepTime = 20; // 20ms
-        const steps = duration / stepTime;
-        const increment = target / steps;
-        let current = 0;
-
-        const updateCounter = () => {
-          current += increment;
-          if (current < target) {
-            counter.innerText = Math.ceil(current).toLocaleString();
-            setTimeout(updateCounter, stepTime);
-          } else {
-            counter.innerText = target.toLocaleString();
-          }
-        };
-        updateCounter();
-      };
-
-      counters.forEach(animateCounter);
-      const userMenuBtn = document.getElementById("user-menu-button");
-      const userMenu = document.getElementById("user-menu");
-
-    userMenuBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevents the click from bubbling to document
-      userMenu.classList.toggle("hidden");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!userMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
-        userMenu.classList.add("hidden");
-      }
-    });
-    </script>
-     <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      // Setup - add a select to the "Type" header for filtering only
-      $('#loanTable thead tr').clone(true).appendTo('#loanTable thead');
-      $('#loanTable thead tr:eq(1) th').each(function (i) {
-        if (i === 2) { // Only the "Type" column
-          var select = $('<select class="border rounded px-1 py-0.5 text-xs" hidden><option value="">All</option></select>')
-            .appendTo($(this).empty())
-            .on('change', function () {
-              var val = $.fn.dataTable.util.escapeRegex($(this).val());
-              table.column(i).search(val ? '^' + val + '$' : '', true, false).draw();
-            });
-          $('#loanTable tbody tr').each(function () {
-            var cellText = $('td', this).eq(i).text().trim();
-            if (select.find('option[value="' + cellText + '"]').length === 0) {
-              select.append('<option value="' + cellText + '">' + cellText + '</option>');
-            }
-          });
-        } else {
-          $(this).html(''); // Clear other header cells in the filter row
-        }
-      });
-
-      const table = $('#loanTable').DataTable({
-        responsive: true,
-        orderCellsTop: true,
-        fixedHeader: true,
-        columnDefs: [
-          { targets: -1, responsivePriority: 1 } // Make Actions column high priority
-        ],
-        language: {
-          search: "🔍 Search:",
-          lengthMenu: "Show _MENU_ entries",
-          info: "Showing _START_ to _END_ of _TOTAL_ loans",
-          infoEmpty: "No loans found",
-          zeroRecords: "No matching loans found"
-        }
-      });
-    });
-
-    // Improved modal rendering with icons and better layout
-    function renderStep(title, data, icon) {
-      let html = `<div style="margin-bottom:10px;"><span style="font-weight:bold;display:inline-flex;align-items:center;gap:6px;">${icon || ''}${title}</span><ul style="margin:4px 0 0 18px;padding:0;">`;
-      for (const key in data) {
-        html += `<li style="margin-bottom:2px;"><strong>${key}:</strong> ${data[key]}</li>`;
-      }
-      html += '</ul></div>';
-      return html;
+  <style>
+    :root {
+      --forest:    #0d4a2f;
+      --forest-mid:#1a6b44;
+      --emerald:   #22c55e;
+      --sage:      #d1fae5;
+      --sand:      #fafaf8;
+      --ink:       #0f1c14;
+      --muted:     #6b7280;
+      --border:    #e5e7eb;
+      --white:     #ffffff;
+      --sky:       #3b82f6;
+      --sidebar-w: 240px;
     }
 
-    const icons = [
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4"/></svg>',
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
-      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg>'
-    ];
-  </script>
-    </body>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--sand);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--forest);
+      color: #fff;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 12px;
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700;
+      line-height: 1.2; color: #fff;
+    }
+    .logo-sub { font-size: 10px; opacity: .5; letter-spacing: .08em; text-transform: uppercase; }
+
+    .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+
+    .nav-section-label {
+      font-size: 10px; letter-spacing: .1em;
+      text-transform: uppercase; opacity: .4;
+      padding: 16px 8px 6px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      text-decoration: none;
+      color: rgba(255,255,255,.7);
+      font-size: 14px; font-weight: 500;
+      transition: background .2s, color .2s;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item.active { background: rgba(34,197,94,.2); color: var(--emerald); }
+    .nav-item i[data-lucide] { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 10px;
+      cursor: pointer; transition: background .2s;
+    }
+    .user-card:hover { background: rgba(255,255,255,.08); }
+
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--forest-mid);
+      border: 2px solid var(--emerald);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-info .name { font-size: 13px; font-weight: 600; color: #fff; }
+    .user-info .role { font-size: 11px; opacity: .5; color: #fff; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1; display: flex;
+      flex-direction: column; min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex; align-items: center; gap: 14px;
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 10px;
+      background: var(--sage); color: var(--forest);
+      text-decoration: none; font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: background .2s; white-space: nowrap;
+    }
+    .back-btn:hover { background: #a7f3d0; }
+    .back-btn i[data-lucide] { width: 14px; height: 14px; }
+
+    .topbar-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--forest);
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--muted);
+      margin-top: 3px;
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color .15s; }
+    .breadcrumb a:hover { color: var(--forest); }
+    .breadcrumb .sep { color: #d1d5db; }
+    .breadcrumb .current { color: var(--ink); font-weight: 600; }
+
+    /* ── Page body ── */
+    .page-body { padding: 28px 32px; flex: 1; }
+
+    /* ── Page header banner ── */
+    .page-header {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 60%, #2d8a50 100%);
+      border-radius: 16px;
+      padding: 24px 28px;
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative; overflow: hidden;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute; top: -30px; right: -30px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(255,255,255,.05);
+    }
+    .page-header::after {
+      content: '';
+      position: absolute; bottom: -40px; right: 80px;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,.04);
+    }
+    .page-header-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; margin-bottom: 4px;
+    }
+    .page-header-text p { font-size: 13px; opacity: .75; }
+
+    /* ── Member info pill on the banner ── */
+    .member-info-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 12px; font-weight: 600;
+      color: #fff; white-space: nowrap;
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .member-info-pill i[data-lucide] { width: 14px; height: 14px; opacity: .8; }
+
+    /* ── Table card ── */
+    .table-card {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .table-card-header {
+      padding: 20px 24px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-card-header h3 {
+      font-size: 16px; font-weight: 700; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .table-card-header h3 i[data-lucide] { color: var(--emerald); width: 18px; height: 18px; }
+
+    .count-badge {
+      font-size: 12px; padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--sage); color: var(--forest);
+      font-weight: 600;
+    }
+
+    /* ── DataTable overrides ── */
+    .dataTables_wrapper {
+      padding: 16px 24px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 12px;
+      font-size: 13px; outline: none;
+      transition: border-color .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus { border-color: var(--emerald); }
+
+    .dataTables_wrapper .dataTables_length select {
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 5px 8px;
+      font-size: 13px; outline: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    table.dataTable thead th {
+      background: #f9fafb !important;
+      color: var(--muted) !important;
+      font-size: 11px !important;
+      letter-spacing: .06em; text-transform: uppercase;
+      font-weight: 600 !important;
+      padding: 10px 16px !important;
+      border-bottom: 1px solid var(--border) !important;
+    }
+
+    table.dataTable tbody tr { transition: background .15s; }
+    table.dataTable tbody tr:hover { background: #f9fafb !important; }
+    table.dataTable tbody td {
+      padding: 13px 16px !important;
+      border-bottom: 1px solid var(--border) !important;
+      vertical-align: middle;
+    }
+    table.dataTable.no-footer { border: none !important; }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      border-radius: 8px !important; padding: 4px 10px !important; font-size: 13px !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: var(--forest) !important; border-color: var(--forest) !important; color: #fff !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+      background: var(--sage) !important; border-color: var(--sage) !important; color: var(--forest) !important;
+    }
+    .dataTables_info { color: var(--muted); font-size: 12px; }
+
+    /* ── Cell styles ── */
+    .member-id-badge {
+      font-weight: 700; font-size: 12px;
+      color: var(--forest); background: var(--sage);
+      padding: 3px 8px; border-radius: 6px;
+      display: inline-block;
+    }
+
+    .ref-number {
+      font-family: monospace; font-size: 12px;
+      color: var(--muted); letter-spacing: .04em;
+    }
+
+    .amount {
+      font-weight: 700; color: var(--ink);
+    }
+
+    .date-cell { color: var(--muted); font-size: 12px; }
+
+    /* ── Action buttons ── */
+    .action-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 12px; font-weight: 600;
+      text-decoration: none;
+      transition: background .2s, transform .1s;
+      white-space: nowrap;
+    }
+    .action-btn:active { transform: scale(.96); }
+    .action-btn i[data-lucide] { width: 13px; height: 13px; }
+    .action-btn.view { background: #dbeafe; color: #1e40af; }
+    .action-btn.view:hover { background: #bfdbfe; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+    /* ── Sidebar user dropdown ── */
+    #user-menu-dropdown {
+      display: none; background: #0a3d27;
+      border-radius: 10px; padding: 6px; margin-top: 6px;
+    }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 7px;
+      text-decoration: none; font-size: 13px;
+      transition: background .15s;
+    }
+    .dropdown-item:hover { background: rgba(255,255,255,.08); }
+    .dropdown-item.normal { color: rgba(255,255,255,.8); }
+    .dropdown-item.danger { color: #f87171; }
+    .dropdown-item i[data-lucide] { width: 14px; height: 14px; }
+
+    @media (max-width: 800px) {
+      :root { --sidebar-w: 0px; }
+      .main { margin-left: 0; }
+      .page-body { padding: 20px 16px; }
+      .topbar { padding: 12px 16px; }
+      .page-header { flex-direction: column; }
+      .member-info-pill { align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ Sidebar ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="{{asset('images/logocoop-removebg-preview-2.png')}}" alt="GBLDC Logo"
+      style="width:40px;height:40px;object-fit:cover;border-radius:10px;flex-shrink:0;" />
+    <div>
+      <div class="logo-text">GBLDC</div>
+      <div class="logo-sub">Admin Dashboard</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="{{route('Admin.dashboard')}}" class="nav-item">
+      <i data-lucide="layout-dashboard"></i> Overview
+    </a>
+    <a href="{{route('Manage.Members')}}" class="nav-item">
+      <i data-lucide="user-plus"></i> Member Registration
+    </a>
+    <a href="{{route('Member.List')}}" class="nav-item">
+      <i data-lucide="users"></i> Official Members
+    </a>
+
+    <div class="nav-section-label">Finance</div>
+    <a href="{{route('LoanApp.list')}}" class="nav-item">
+      <i data-lucide="file-text"></i> Loan Applications
+    </a>
+    <a href="{{route('Loan.Records')}}" class="nav-item">
+      <i data-lucide="badge-check"></i> Approved Loans
+    </a>
+    <a href="{{route('Payment.Page')}}" class="nav-item">
+      <i data-lucide="credit-card"></i> Payment
+    </a>
+    <a href="{{route('Add.Transactions')}}" class="nav-item">
+      <i data-lucide="arrow-left-right"></i> Transactions
+    </a>
+    <a href="{{route('Shared.Capital.List.View')}}" class="nav-item active">
+      <i data-lucide="piggy-bank"></i> Shared Capital
+    </a>
+
+    <div class="nav-section-label">System</div>
+    <a href="{{route('Admin.manage')}}" class="nav-item">
+      <i data-lucide="shield-check"></i> Manage Users
+    </a>
+    <a href="{{ route('Admin.Settings') }}" class="nav-item">
+      <i data-lucide="settings"></i> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card" id="user-menu-button">
+      <div class="avatar">A</div>
+      <div class="user-info">
+        <div class="name">Admin</div>
+        <div class="role">Super Administrator</div>
+      </div>
+      <i data-lucide="more-vertical" style="margin-left:auto;opacity:.4;width:14px;height:14px;"></i>
+    </div>
+    <div id="user-menu-dropdown">
+      <a href="#" class="dropdown-item normal">
+        <i data-lucide="user"></i> Profile
+      </a>
+      <a href="{{ route('Admin.Logout') }}" class="dropdown-item danger">
+        <i data-lucide="log-out"></i> Logout
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ Main ═══ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <a href="{{route('Check.Last.Record', ['member_id' => $FindRecord->first()->member_id ?? '', 'type' => 'shared_capital'])}}" class="back-btn">
+      <i data-lucide="arrow-left"></i> Back
+    </a>
+    <div class="topbar-title">
+      <h1>Payment History Detail</h1>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <i data-lucide="house" style="width:12px;height:12px;"></i>
+        <a href="{{route('Admin.dashboard')}}">Dashboard</a>
+        <span class="sep"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+        <a href="{{route('Shared.Capital.List.View')}}">Shared Capital</a>
+        <span class="sep"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+        <a href="{{route('Check.Last.Record', ['member_id' => $FindRecord->first()->member_id ?? '', 'type' => 'shared_capital'])}}">Member Record</a>
+        <span class="sep"><i data-lucide="chevron-right" style="width:12px;height:12px;"></i></span>
+        <span class="current">Payment History</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page body -->
+  <div class="page-body">
+
+    <!-- Banner -->
+    <div class="page-header">
+      <div class="page-header-text">
+        <h2>Shared Capital Payment History Detail</h2>
+        <p>View all payment transactions for this member's shared capital contributions.</p>
+      </div>
+      <div class="member-info-pill">
+        <i data-lucide="user-circle"></i>
+        Member ID: {{ $FindRecord->first()->member_id ?? '—' }}
+      </div>
+    </div>
+
+    <!-- Table card -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>
+          <i data-lucide="receipt"></i>
+          Payment Records
+        </h3>
+        <span class="count-badge">{{ $FindRecord->count() }} {{ $FindRecord->count() === 1 ? 'Transaction' : 'Transactions' }}</span>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table id="loanTable" class="display responsive nowrap no-footer" style="width:100%">
+          <thead>
+            <tr>
+              <th>Member ID</th>
+              <th>Reference No.</th>
+              <th>Payment Amount</th>
+              <th>Transaction Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach ($FindRecord as $Record)
+            <tr>
+              <td><span class="member-id-badge">{{$Record->member_id}}</span></td>
+              <td><span class="ref-number">{{$Record->reference_number}}</span></td>
+              <td><span class="amount">₱{{ number_format($Record->payment_amount, 2) }}</span></td>
+              <td class="date-cell">{{ date('M d, Y', strtotime($Record->transaction_date)) }}</td>
+              <td>
+                <a href="{{route('shared_capital_receipt', $Record->id)}}" class="action-btn view">
+                  <i data-lucide="eye"></i> View Details
+                </a>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script>
+  lucide.createIcons();
+
+  // User menu toggle
+  const userBtn  = document.getElementById('user-menu-button');
+  const userMenu = document.getElementById('user-menu-dropdown');
+  userBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    userMenu.style.display = userMenu.style.display === 'none' ? 'block' : 'none';
+  });
+  document.addEventListener('click', () => { userMenu.style.display = 'none'; });
+
+  $(document).ready(function () {
+    $('#loanTable').DataTable({
+      responsive: true,
+      fixedHeader: true,
+      order: [[3, 'desc']],
+      language: {
+        search: "Search:",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ records",
+        infoEmpty: "No records found",
+        zeroRecords: "No matching records found"
+      },
+      drawCallback: function() { lucide.createIcons(); }
+    });
+  });
+</script>
+</body>
 </html>

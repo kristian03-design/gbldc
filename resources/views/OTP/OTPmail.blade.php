@@ -1,95 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your OTP Code</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your OTP Code | GBLDC</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f0f4f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+<body style="margin:0;padding:36px 16px;background-color:#f5faf6;font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#1a2e1e;">
 
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f0f4f8; padding: 40px 0;">
-        <tr>
-            <td align="center">
+  <div style="max-width:560px;margin:0 auto;">
 
-                <!-- Email Card -->
-                <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width: 560px; width: 100%; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
-
-                    <!-- Header -->
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); padding: 40px 48px 36px; text-align: center;">
-                            <!-- Shield Icon -->
-                            <div style="display: inline-block; background: rgba(255,255,255,0.15); border-radius: 50%; width: 64px; height: 64px; line-height: 64px; text-align: center; margin-bottom: 16px; font-size: 28px;">
-                                🔐
-                            </div>
-                            <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.3px;">Verification Code</h1>
-                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.75); font-size: 14px;">Greater Bulacan Livelihood Development Cooperative</p>
-                        </td>
-                    </tr>
-
-                    <!-- Body -->
-                    <tr>
-                        <td style="padding: 40px 48px;">
-
-                            <p style="margin: 0 0 8px; color: #374151; font-size: 16px; font-weight: 600;">
-                                Dear {{ ucfirst($userType ?? 'User') }},
-                            </p>
-                            <p style="margin: 0 0 28px; color: #6b7280; font-size: 15px; line-height: 1.6;">
-                                We received a request requiring verification. Use the one-time code below to complete your action.
-                            </p>
-
-                            <!-- OTP Box -->
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td align="center" style="padding: 4px 0 32px;">
-                                        <div style="background: #f8faff; border: 2px dashed #1a73e8; border-radius: 12px; padding: 24px 36px; display: inline-block;">
-                                            <p style="margin: 0 0 4px; color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">Your OTP Code</p>
-                                            <p style="margin: 0; color: #1a73e8; font-size: 38px; font-weight: 800; letter-spacing: 10px; font-family: 'Courier New', Courier, monospace;">{{$otp}}</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <!-- Warning Row -->
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
-                                <tr>
-                                    <td style="background-color: #fff8e1; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 14px 16px;">
-                                        <p style="margin: 0; color: #92400e; font-size: 13px; line-height: 1.5;">
-                                            ⏱ &nbsp;This code will expire in <strong>5 minutes</strong>. Do not share it with anyone.
-                                        </p>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p style="margin: 0; color: #9ca3af; font-size: 13px; line-height: 1.6;">
-                                If you did not request this code, you can safely ignore this email. Your account remains secure.
-                            </p>
-
-                        </td>
-                    </tr>
-
-                    <!-- Divider -->
-                    <tr>
-                        <td style="padding: 0 48px;">
-                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 0;">
-                        </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                        <td style="padding: 24px 48px; text-align: center;">
-                            <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.6;">
-                                © <?php echo date('Y'); ?> Greater Bulacan Livelihood Development Cooperative<br>
-                                This is an automated message — please do not reply.
-                            </p>
-                        </td>
-                    </tr>
-
-                </table>
-                <!-- End Email Card -->
-
-            </td>
-        </tr>
+    <!-- Eyebrow -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:16px;">
+      <tr>
+        <td style="font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#16a34a;">GBLDC COOPERATIVE</td>
+        <td align="right" style="font-size:11px;color:#4a6b4f;">Verification Code</td>
+      </tr>
     </table>
 
+    <!-- Card -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 32px rgba(26,46,30,0.10),0 1px 4px rgba(26,46,30,0.05);">
+
+      <!-- Header -->
+      <tr>
+        <td style="background-color:#1a2e1e;padding:38px 40px 34px;">
+          <div style="display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#34d399;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);border-radius:5px;padding:4px 11px;margin-bottom:18px;">One-Time Code</div>
+          <div style="font-family:Georgia,serif;font-size:26px;font-weight:600;color:#ffffff;margin-bottom:5px;line-height:1.25;">Verification Code</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.48);">Greater Bulacan Livelihood Development Cooperative</div>
+        </td>
+      </tr>
+
+      <!-- Body -->
+      <tr>
+        <td style="padding:32px 40px;">
+
+          <p style="font-size:15px;color:#1a2e1e;margin:0 0 8px;">Dear <strong style="color:#2d4a32;">{{ ucfirst($userType ?? 'Member') }}</strong>,</p>
+          <p style="font-size:13px;color:#4a6b4f;line-height:1.75;margin:0 0 28px;">
+            We received a request requiring identity verification. Use the one-time code below to complete your action. Do not share this code with anyone.
+          </p>
+
+          <!-- OTP Hero -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:18px;">
+            <tr>
+              <td style="background-color:#1a2e1e;border-radius:16px;padding:32px 24px;text-align:center;">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:#34d399;margin-bottom:16px;">Your OTP Code</div>
+                <div style="font-family:'Courier New',Courier,monospace;font-size:44px;font-weight:700;color:#ffffff;letter-spacing:0.2em;line-height:1;">{{ $otp }}</div>
+                <!-- Decorative dots -->
+                <div style="margin-top:18px;">
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(52,211,153,0.35);margin:0 3px;"></span>
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(52,211,153,0.35);margin:0 3px;"></span>
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(52,211,153,0.35);margin:0 3px;"></span>
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(52,211,153,0.35);margin:0 3px;"></span>
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:rgba(52,211,153,0.35);margin:0 3px;"></span>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Expiry Notice -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:20px;">
+            <tr>
+              <td style="background-color:#f0f7f1;border:1px solid #b6e8c0;border-radius:12px;padding:14px 18px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td width="34" valign="middle">
+                      <div style="width:34px;height:34px;border-radius:8px;background-color:#dcfce7;text-align:center;line-height:34px;font-size:16px;">⏱</div>
+                    </td>
+                    <td style="padding-left:12px;font-size:13px;color:#4a6b4f;line-height:1.6;">
+                      This code expires in <strong style="color:#2d4a32;">5 minutes</strong>. Enter it promptly to complete your verification.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Divider -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:20px 0;">
+            <tr>
+              <td style="border-top:1px solid #d4ecd8;font-size:0;">&nbsp;</td>
+            </tr>
+          </table>
+
+          <p style="font-size:13px;color:#4a6b4f;line-height:1.75;margin:0;">
+            If you did not request this code, you can safely ignore this email. Your account remains secure and no changes have been made.
+          </p>
+
+        </td>
+      </tr>
+
+      <!-- Card Footer -->
+      <tr>
+        <td style="background-color:#f0f7f1;border-top:1px solid #d4ecd8;padding:18px 40px;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+            <tr>
+              <td style="font-size:12px;font-weight:600;color:#2d4a32;">GBLDC Cooperative</td>
+              <td align="right" style="font-size:11px;color:#4a6b4f;">© {{ date('Y') }} · Do not reply</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </table>
+    <!-- /Card -->
+
+    <!-- Bottom tag -->
+    <p style="text-align:center;margin-top:18px;font-size:11px;color:#4a6b4f;line-height:1.7;">
+      This is an automated security message from GBLDC.<br>
+      Please do not reply to this email.
+    </p>
+
+  </div>
 </body>
 </html>

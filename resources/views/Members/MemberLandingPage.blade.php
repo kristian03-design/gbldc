@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GBLDC | Greater Bulacan Livelihood Development Cooperative</title>
+  <title>GBLDC | Landing Page</title>
   <link rel="icon" type="image/png" href="{{asset('images/logocoop-removebg-preview-2.png')}}" sizes="512x512"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -292,7 +292,7 @@
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(52, 211, 153, 0.18);
       border: 1px solid rgba(52, 211, 153, 0.3);
-      color: var(--amber-soft);
+      color: white;
       font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em;
       text-transform: uppercase;
       padding: 0.38rem 0.9rem;
@@ -303,7 +303,7 @@
     }
     .hero-eyebrow .dot {
       width: 5px; height: 5px;
-      border-radius: 50%; background: var(--amber-soft);
+      border-radius: 50%; background: white;
       animation: pulse 2s infinite;
     }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -339,8 +339,8 @@
 
     .btn-cta {
       display: inline-flex; align-items: center; gap: 8px;
-      background: var(--amber);
-      color: var(--white);
+      background: whitesmoke;
+      color: var(--green-deep);
       font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 0.85rem 1.75rem;
@@ -351,8 +351,8 @@
       transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
     }
     .btn-cta:hover {
-      background: var(--amber-soft);
-      color: var(--ink);
+      background: var(--green-mid);
+      color: var(--white);
       transform: translateY(-2px);
       box-shadow: 0 10px 28px rgba(52, 211, 153, 0.32);
     }
@@ -512,12 +512,12 @@
     .s-num {
       font-family: 'Cormorant Garamond', serif;
       font-size: 4rem; font-weight: 700;
-      color: var(--parchment2);
+      color: var(--grove-mid);
       line-height: 1; position: absolute;
       top: 1.25rem; right: 1.5rem;
       transition: color 0.35s;
     }
-    .s-card:hover .s-num { color: rgba(22, 163, 74, 0.06); }
+    .s-card:hover { color: rgba(22, 163, 74, 0.06); }
 
     .s-icon {
       width: 52px; height: 52px;
@@ -533,7 +533,7 @@
       stroke: var(--grove-mid); fill: none; stroke-width: 1.6;
       transition: stroke 0.35s;
     }
-    .s-card:hover .s-icon svg { stroke: var(--amber-soft); }
+    .s-card:hover .s-icon svg { stroke: white; }
 
     .s-title {
       font-family: 'Cormorant Garamond', serif;
@@ -925,7 +925,7 @@
       width: 40px; height: 40px;
       padding: 5px;
     }
-    .f-brand .logo-name { color: #fff; font-size: 1.25rem; }
+    .f-brand .logo-name { color: #fff; font-size: 1.25rem; margin-top: 15px; margin-left: 12px;}
     .f-tagline {
       font-size: 0.83rem; color: rgba(255,255,255,0.4);
       line-height: 1.75; margin: 1rem 0 1.5rem;
@@ -943,7 +943,7 @@
 
     .f-col h5 {
       font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--amber-soft); margin-bottom: 1.25rem;
+      text-transform: uppercase; color: whitesmoke; margin-bottom: 1.25rem;
     }
     .f-col ul { list-style: none; }
     .f-col ul li { margin-bottom: 0.55rem; }
@@ -963,9 +963,9 @@
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
     }
-    .f-copy { font-size: 0.73rem; color: rgba(255,255,255,0.25); }
+    .f-copy { font-size: 0.85rem; color: rgba(255,255,255,0.25); }
     .f-legal { display: flex; gap: 1.5rem; }
-    .f-legal a { font-size: 0.73rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
+    .f-legal a { font-size: 0.85rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
     .f-legal a:hover { color: rgba(255,255,255,0.55); }
 
     @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
@@ -990,7 +990,7 @@
         <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="dd-panel">
-        <a href="{{ route('Under.Construction') }}">Loans</a>
+        <a href="{{ route('Member.Loans') }}">Loans</a>
         <a href="{{ route('Under.Construction') }}">Deposits</a>
         <a href="{{ route('Under.Construction') }}">Savings</a>
       </div>
@@ -1002,14 +1002,14 @@
         <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="dd-panel">
-        <a href="{{ route('Under.Construction') }}">About GBLDC</a>
+        <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
         <a href="{{ route('Under.Construction') }}">Mission & Vision</a>
         <a href="{{ route('Under.Construction') }}">Board of Directors</a>
         <a href="{{ route('Under.Construction') }}">Committee Officers</a>
       </div>
     </div>
 
-    <a href="{{ route('Under.Construction') }}">News & Events</a>
+    <a href="{{ route('Member.NewsEvents') }}">News & Events</a>
   </nav>
 
   <div style="display:flex;align-items:center;gap:12px;">
@@ -1020,6 +1020,7 @@
       </button>
       <div class="profile-panel">
         <a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a>
+        <a href="{{ route('Member.Notifications') }}">Notifications</a>
         <a href="{{ route('Member.AccountSettings') }}">Settings</a>
         <a href="{{ route('Member.ContactUs') }}">Help & Support</a>
         <div class="divider"></div>
@@ -1037,7 +1038,7 @@
   <div class="mobile-nav-group">
     <button onclick="this.nextElementSibling.classList.toggle('open')">Products & Services</button>
     <div class="mobile-sub">
-      <a href="{{ route('Under.Construction') }}">Loans</a>
+      <a href="{{ route('Member.Loans') }}">Loans</a>
       <a href="{{ route('Under.Construction') }}">Deposits</a>
       <a href="{{ route('Under.Construction') }}">Savings</a>
     </div>
@@ -1045,15 +1046,16 @@
   <div class="mobile-nav-group">
     <button onclick="this.nextElementSibling.classList.toggle('open')">About</button>
     <div class="mobile-sub">
-      <a href="{{ route('Under.Construction') }}">About GBLDC</a>
+      <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
       <a href="{{ route('Under.Construction') }}">Mission & Vision</a>
       <a href="{{ route('Under.Construction') }}">Board of Directors</a>
       <a href="{{ route('Under.Construction') }}">Committee Officers</a>
     </div>
   </div>
-  <a href="{{ route('Under.Construction') }}">News & Events</a>
+  <a href="{{ route('Member.NewsEvents') }}">News & Events</a>
   <div class="mobile-divider"></div>
   <a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a>
+  <a href="{{ route('Member.Notifications') }}">Notifications</a>
   <a href="{{ route('Member.AccountSettings') }}">Settings</a>
   <a href="{{ route('Member.ContactUs') }}">Help & Support</a>
   <a href="#" style="color:#c0392b;" onclick="openLogoutModal()">Logout</a>
@@ -1086,9 +1088,9 @@
       </a>
     </div>
     <div class="hero-stats">
-      <div><span class="stat-val">1,000+</span><span class="stat-lbl">Active Members</span></div>
+      <div><span class="stat-val">100</span><span class="stat-lbl">Active Members</span></div>
       <div><span class="stat-val">20+</span><span class="stat-lbl">Years of Service</span></div>
-      <div><span class="stat-val">3</span><span class="stat-lbl">Branch Locations</span></div>
+      <div><span class="stat-val">1</span><span class="stat-lbl">Branch Locations</span></div>
     </div>
     <div class="slant" aria-hidden="true"></div>
   </div>
@@ -1121,7 +1123,7 @@
         </div>
         <h3 class="s-title">Flexible Loans</h3>
         <p class="s-desc">Access competitive loan rates for personal, business, or educational needs with flexible repayment terms tailored just for you.</p>
-        <a href="{{ route('Under.Construction') }}" class="s-link">
+        <a href="{{ route('Member.Loans') }}" class="s-link">
           Learn More
           <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
@@ -1200,14 +1202,13 @@
         <span class="label">Stay Informed</span>
         <h2 class="sec-title display">Latest News<br>& Updates</h2>
       </div>
-      <a href="#" class="btn-dark">
+      <a href="{{ route('Member.NewsEvents') }}" class="btn-dark">
         View All News
         <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
 
     <div class="news-grid">
-      <!-- Featured -->
       <article class="n-card featured">
         <img src="{{ asset('images/event1.jpg') }}" alt="Event 1" class="n-img">
         <div class="n-body">
@@ -1244,11 +1245,38 @@
 <!-- ═══════════ TESTIMONIALS ═══════════ -->
 <section class="section testi-bg">
   <div class="container">
-    <span class="label">Member Voices</span>
-    <h2 class="sec-title display">What Our Members Say</h2>
-    <p class="sec-sub">Real stories from the people we've had the privilege of serving.</p>
+    <div class="sec-head-row sec-head">
+      <div>
+        <span class="label">Member Voices</span>
+        <h2 class="sec-title display" style="color:var(--white);">What Our Members Say</h2>
+        <p class="sec-sub" style="color:rgba(255,255,255,0.45);">Real stories from the people we've had the privilege of serving.</p>
+      </div>
+      <a href="{{ route('Member.Testimonials') }}" class="btn-dark" style="background:var(--white);color:var(--ink);">
+        View All Testimonials
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
 
     <div class="testi-grid">
+      @if(isset($webContents['testimonial']) && $webContents['testimonial']->count() > 0)
+        @foreach($webContents['testimonial']->take(3) as $testimonial)
+        <div class="t-card">
+          <span class="t-quote-mark">"</span>
+          <div class="t-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="t-text">"{{ $testimonial->content }}"</p>
+          <div class="t-author">
+            <div class="t-av">{{ substr($testimonial->title, 0, 1) }}</div>
+            <div><div class="t-name">{{ $testimonial->title }}</div><div class="t-role">{{ $testimonial->subtitle ?? 'Member' }}</div></div>
+          </div>
+        </div>
+        @endforeach
+      @else
       <div class="t-card">
         <span class="t-quote-mark">"</span>
         <div class="t-stars">
@@ -1296,6 +1324,7 @@
           <div><div class="t-name">Roberto M. Cruz</div><div class="t-role">Senior Member, Main Branch</div></div>
         </div>
       </div>
+      @endif
     </div>
 
     <div class="trust-bar">
@@ -1309,7 +1338,7 @@
         </div>
       </div>
       <div class="trust-sep"></div>
-      <span class="trust-text">Trusted by 1,000+ active members</span>
+      <span class="trust-text">Trusted by 100+ active members</span>
       <div class="trust-sep"></div>
       <span class="trust-text">CDA Registered Cooperative</span>
     </div>
@@ -1353,7 +1382,7 @@
     <p class="modal-p">Are you sure you want to end your session? You'll need to sign in again to access your member dashboard.</p>
     <div class="modal-btns">
       <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
-      <a href="{{ route('Member.Logout') }}" class="btn-danger">Yes, Log Out</a>
+      <a href="{{ route('Landing.Page') }}" class="btn-danger">Yes, Log Out</a>
     </div>
   </div>
 </div>
@@ -1376,7 +1405,7 @@
       <div class="f-col">
         <h5>Services</h5>
         <ul>
-          <li><a href="{{ route('Under.Construction') }}">Loan Services</a></li>
+          <li><a href="{{ route('Member.Loans') }}">Loan Services</a></li>
           <li><a href="{{ route('Under.Construction') }}">Deposit Services</a></li>
           <li><a href="{{ route('Under.Construction') }}">Savings Services</a></li>
         </ul>
@@ -1384,7 +1413,7 @@
       <div class="f-col">
         <h5>About</h5>
         <ul>
-          <li><a href="{{ route('Under.Construction') }}">About GBLDC</a></li>
+          <li><a href="{{ route('Member.AboutUs') }}">About GBLDC</a></li>
           <li><a href="{{ route('Under.Construction') }}">Senior Management</a></li>
           <li><a href="{{ route('Under.Construction') }}">Officers & Committees</a></li>
           <li><a href="{{ route('Under.Construction') }}">About Membership</a></li>
@@ -1398,11 +1427,6 @@
           <li><a href="#">Apply Now</a></li>
           <li><a href="#">Feedback</a></li>
         </ul>
-        <h5 style="margin-top:1.5rem;">Get Our App</h5>
-        <div class="f-app">
-          <a href="https://play.google.com/store" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play"></a>
-          <a href="https://www.apple.com/app-store/" target="_blank"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store"></a>
-        </div>
       </div>
     </div>
     <div class="f-bottom">
@@ -1494,6 +1518,147 @@
   document.getElementById('logout-modal').addEventListener('click', function(e) {
     if (e.target === this) closeLogoutModal();
   });
+</script>
+<!-- ═══════════ COOKIE CONSENT ═══════════ -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cb-content">
+    <div class="cb-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="cb-text">
+      <h4>We Value Your Privacy</h4>
+      <p>GBLDC uses cookies to ensure you get the best experience on our cooperative portal. By continuing to use our site, you agree to our <a href="{{ route('Under.Construction') }}">Cookie Policy</a>.</p>
+    </div>
+  </div>
+  <div class="cb-actions">
+    <button class="cb-btn cb-accept" onclick="acceptCookies()">Accept All</button>
+    <button class="cb-btn cb-decline" onclick="declineCookies()">Decline</button>
+  </div>
+</div>
+
+<style>
+/* ════════════════════ COOKIE CONSENT BANNER ════════════════════ */
+.cookie-banner {
+  position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 9999;
+  max-width: 440px; background: var(--white, #ffffff);
+  border: 1px solid rgba(22, 163, 74, 0.15); border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;
+  transform: translateY(150%); opacity: 0; visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease, visibility 0.6s;
+}
+.cookie-banner.show { transform: translateY(0); opacity: 1; visibility: visible; }
+.cb-content { display: flex; gap: 1rem; align-items: flex-start; }
+.cb-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: var(--moss, #dcfce7); color: var(--grove-mid, #15803d);
+  display: flex; align-items: center; justify-content: center;
+}
+.cb-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+.cb-text h4 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink, #1a2e1e); margin-bottom: 0.35rem; }
+.cb-text p { font-size: 0.82rem; color: var(--ink-muted, #4a6b4f); line-height: 1.6; }
+.cb-text a { color: var(--grove, #16a34a); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cb-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+.cb-btn {
+  padding: 0.65rem 1.25rem; border-radius: 8px; font-family: 'Syne', sans-serif;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.cb-accept { background: var(--grove, #16a34a); color: #fff; border: none; }
+.cb-accept:hover { background: var(--grove-mid, #15803d); transform: translateY(-1px); }
+.cb-decline { background: transparent; color: var(--ink-soft, #2d4a32); border: 1px solid rgba(22, 163, 74, 0.25); }
+.cb-decline:hover { background: var(--parchment2, #f0f7f1); }
+@media (max-width: 600px) {
+  .cookie-banner { bottom: 1rem; left: 1rem; right: 1rem; max-width: none; }
+  .cb-actions { flex-direction: column; }
+  .cb-btn { width: 100%; }
+}
+</style>
+
+<script>
+/* ════════════════════ COOKIE CONSENT LOGIC ════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const cb = document.getElementById('cookieBanner');
+  if (!localStorage.getItem('gbldc_cookie_consent')) {
+    setTimeout(() => { cb.classList.add('show'); }, 1500);
+  }
+});
+function acceptCookies() {
+  localStorage.setItem('gbldc_cookie_consent', 'accepted');
+  document.getElementById('cookieBanner').classList.remove('show');
+}
+function declineCookies() {
+  localStorage.setItem('gbldc_cookie_consent', 'declined');
+  document.getElementById('cookieBanner').classList.remove('show');
+}
+</script>
+
+@php
+  $unreadEligibility = false;
+  if(isset($user_account) && isset($user_account->member_id)) {
+      $unreadEligibility = \App\Models\Notification::where('member_id', $user_account->member_id)
+          ->where('type', 'loan_eligibility')
+          ->where('is_read', false)
+          ->exists();
+  }
+@endphp
+<!-- Toast Notifications -->
+<div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
+  @if(session('success') || session('Record-updated'))
+    <div class="toast success" style="background: white; border-left: 4px solid #10b981; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: flex-start; gap: 12px; animation: slideInRight 0.3s ease forwards;">
+      <i data-lucide="check-circle" style="color: #10b981; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+      <div>
+        <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827;">Success</h4>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #4b5563;">{{ session('success') ?? session('Record-updated') }}</p>
+      </div>
+      <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; margin-left: auto;"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
+    </div>
+  @endif
+
+  @if(session('error'))
+    <div class="toast error" style="background: white; border-left: 4px solid #ef4444; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: flex-start; gap: 12px; animation: slideInRight 0.3s ease forwards;">
+      <i data-lucide="alert-circle" style="color: #ef4444; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+      <div>
+        <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827;">Error</h4>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #4b5563;">{{ session('error') }}</p>
+      </div>
+      <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; margin-left: auto;"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
+    </div>
+  @endif
+
+  @if(session('loan_eligible') || $unreadEligibility)
+    <div class="toast info" style="background: white; border-left: 4px solid #3b82f6; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: flex-start; gap: 12px; animation: slideInRight 0.3s ease forwards;">
+      <i data-lucide="award" style="color: #3b82f6; width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+      <div>
+        <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827;">Loan Eligibility Unlocked!</h4>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #4b5563;">Congratulations! You have paid 50% of your Shared Capital and are now eligible to apply for GBLDC loans.</p>
+        <a href="{{ route('Member.Notifications') }}" style="display:inline-block; margin-top:6px; font-size:12px; color:#3b82f6; text-decoration:underline;">View Details</a>
+      </div>
+      <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; margin-left: auto;"><i data-lucide="x" style="width: 16px; height: 16px;"></i></button>
+    </div>
+  @endif
+</div>
+
+<style>
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+</style>
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.toast').forEach(t => {
+      t.style.animation = 'fadeOut 0.5s ease forwards';
+      setTimeout(() => t.remove(), 500);
+    });
+  }, 5000);
+  
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 </script>
 </body>
 </html>

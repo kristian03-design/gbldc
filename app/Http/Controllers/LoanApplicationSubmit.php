@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon; // To handle date formatting
 use Illuminate\Support\Facades\Log;
+use App\Models\Notification;
 
 class LoanApplicationSubmit extends Controller
 {
@@ -121,5 +122,62 @@ class LoanApplicationSubmit extends Controller
             ]);
             return redirect()->back()->with('error', 'Failed to submit loan application: ' . $e->getMessage());
         }
+    }
+
+    public function rejectLoan(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+        ]);
+
+        $ApplicationRecord = LoanApplication::where('id', $request->id)->first();
+
+        if (!$ApplicationRecord) {
+            return redirect()->route('LoanApp.list')->with('error', 'Loan application not found or already processed.');
+        }
+
+        // Send Notification to Member
+        Notification::create([
+            'member_id' => $ApplicationRecord->member_id,
+            'title' => 'Loan Application Rejected',
+            'message' => 'We regret to inform you that your loan application for ₱' . number_format($ApplicationRecord->loan_amount, 2) . ' has been rejected.',
+            'type' => 'loan',
+            'is_read' => false
+        ]);
+
+        $ApplicationRecord->delete();
+
+        return redirect()->route('LoanApp.list')->with('error', 'Loan application has been rejected and deleted.');
+    }
+
+    public function notifyRevision(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+            'loan_amount' => 'required|numeric|min:0',
+            'loan_term' => 'required|string',
+        ]);
+
+        $ApplicationRecord = LoanApplication::where('id', $request->id)->first();
+
+        if (!$ApplicationRecord) {
+            return redirect()->route('LoanApp.list')->with('error', 'Loan application not found or already processed.');
+        }
+
+        // Update the application with the new parameters
+        $ApplicationRecord->loan_amount = $request->loan_amount;
+        $ApplicationRecord->loan_term = $request->loan_term;
+        $ApplicationRecord->save();
+
+        // Send Notification to Member
+        Notification::create([
+            'member_id' => $ApplicationRecord->member_id,
+            'title' => 'Loan Application Revised',
+            'message' => 'Your pending loan application has been revised by the administrator. The pending amount is now ₱' . number_format($request->loan_amount, 2) . ' and the term is ' . $request->loan_term . '. Please contact us if you have concerns.',
+            'type' => 'loan',
+            'is_read' => false
+        ]);
+
+        return redirect()->back()->with('success', 'The loan application was successfully updated and the member was notified of the revisions.');
     }
 }

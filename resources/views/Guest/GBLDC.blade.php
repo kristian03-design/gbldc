@@ -1,770 +1,995 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- FontAwesome for Icons -->
-    <script src="https://kit.fontawesome.com/e588cb9d47.js"
-      crossorigin="anonymous"></script>
-    <link rel="icon" type="image/png"
-      href="{{asset('images/logocoop-removebg-preview-2.png')}}" sizes="512x512" />
-    <link href="../src/animation/animation.css" rel="stylesheet">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
-      rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script
-      src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <title>Landing Page | GBLDC</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GBLDC | Landing Page</title>
+  <link rel="icon" type="image/png" href="{{ asset('images/logocoop-removebg-preview-2.png') }}" sizes="512x512"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/e588cb9d47.js" crossorigin="anonymous"></script>
 
-  </head>
-  <body class="bg-white text-gray-800 scroll-behaviour-smooth" style="font-family: Outfit;">
-    <!-- Modern Header/Navbar -->
-    <header
-      class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
-      <div
-        class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 lg:py-0">
-        <!-- Logo Section - Responsive sizing -->
-        <a href="{{route('Landing.Page')}}"
-          class="flex items-center gap-2 sm:gap-3 py-1 sm:py-2 flex-shrink-0">
-          <img src="{{asset ('images/logocoop-removebg-preview-2.png')}}"
-            alt="GBLDC Logo"
-            class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain">
-          <span
-            class="font-semibold text-base sm:text-lg lg:text-xl text-green-700 tracking-tight whitespace-nowrap">GBLDC</span>
+  <style>
+    /* ════════════════════ TOKENS ════════════════════ */
+    :root {
+      --ink:        #1a2e1e;
+      --ink-soft:   #2d4a32;
+      --ink-muted:  #4a6b4f;
+      --parchment:  #ffffff;
+      --parchment2: #f0f7f1;
+      --canvas:     #f5faf6;
+      --grove:      #16a34a;
+      --grove-mid:  #15803d;
+      --grove-light:#22c55e;
+      --moss:       #dcfce7;
+      --amber:      #059669;
+      --amber-soft: #34d399;
+      --amber-pale: #d1fae5;
+      --white:      #ffffff;
+      --shadow-sm:  0 2px 8px rgba(22,163,74,0.08);
+      --shadow-md:  0 8px 24px rgba(22,163,74,0.12);
+      --shadow-lg:  0 20px 48px rgba(22,163,74,0.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--canvas);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9998;
+    }
+
+    .display { font-family: 'Cormorant Garamond', serif; line-height: 1.05; letter-spacing: -0.01em; }
+    .label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grove-mid); }
+
+    /* ════════════════════ HEADER ════════════════════ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(245,250,246,0.94);
+      backdrop-filter: blur(18px) saturate(1.4);
+      border-bottom: 1px solid rgba(22,163,74,0.12);
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+    .logo img { width: 46px; height: 46px; overflow: hidden; padding: 4px; flex-shrink: 0; }
+    .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 700; color: var(--grove); letter-spacing: 0.04em; }
+
+    .nav-desktop { display: flex; align-items: center; gap: 0; }
+    .nav-desktop a, .nav-desktop .dd-trigger {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 0.45rem 0.9rem; border-radius: 6px;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      display: flex; align-items: center; gap: 4px;
+      transition: color 0.2s, background 0.2s; white-space: nowrap;
+    }
+    .nav-desktop a:hover, .nav-desktop .dd-trigger:hover { color: var(--grove); background: rgba(22,163,74,0.08); }
+
+    .dd-wrap { position: relative; }
+    .dd-panel {
+      position: absolute; top: calc(100% + 6px); left: 0;
+      min-width: 190px; background: var(--white);
+      border: 1px solid rgba(22,163,74,0.12); border-radius: 12px;
+      padding: 0.35rem; box-shadow: var(--shadow-md);
+      opacity: 0; visibility: hidden; transform: translateY(6px);
+      transition: all 0.2s ease;
+    }
+    .dd-wrap:hover .dd-panel { opacity: 1; visibility: visible; transform: none; }
+    .dd-panel a {
+      display: block; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 0.55rem 0.85rem; border-radius: 8px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .dd-panel a:hover { background: var(--parchment2); color: var(--grove); }
+
+    /* login button in header */
+    .btn-login-header {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--grove); color: #fff;
+      font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.52rem 1.4rem; border-radius: 99px;
+      text-decoration: none; border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 3px 10px rgba(22,163,74,0.25);
+    }
+    .btn-login-header:hover { background: var(--grove-mid); transform: translateY(-1px); }
+
+    .ham-btn {
+      display: none; width: 40px; height: 40px;
+      border-radius: 8px; border: 1px solid rgba(22,163,74,0.18);
+      background: none; cursor: pointer; align-items: center; justify-content: center; color: var(--ink);
+    }
+    .ham-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+
+    .mobile-nav {
+      display: none; flex-direction: column; gap: 2px;
+      position: fixed; inset: 68px 0 0;
+      background: var(--canvas); padding: 1.25rem;
+      overflow-y: auto; z-index: 199;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a, .mobile-nav-group > button {
+      display: block; width: 100%; text-align: left;
+      padding: 0.7rem 1rem; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Syne', sans-serif; transition: background 0.15s, color 0.15s;
+    }
+    .mobile-nav a:hover, .mobile-nav-group > button:hover { background: var(--parchment2); color: var(--grove); }
+    .mobile-sub { display: none; padding-left: 1rem; }
+    .mobile-sub.open { display: block; }
+    .mobile-sub a { font-size: 0.83rem; }
+    .mobile-divider { height: 1px; background: var(--parchment2); margin: 0.5rem 0; }
+    .mobile-login {
+      margin-top: 0.5rem; padding: 0.75rem 1rem;
+      background: var(--grove); color: #fff; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 700; text-decoration: none;
+      text-align: center; letter-spacing: 0.06em;
+      font-family: 'Syne', sans-serif;
+    }
+
+    @media (max-width: 1024px) {
+      .nav-desktop { display: none; }
+      .btn-login-header { display: none; }
+      .ham-btn { display: flex; }
+    }
+
+    /* ════════════════════ HERO ════════════════════ */
+    .hero {
+      min-height: 100vh; padding-top: 68px;
+      display: grid; grid-template-columns: 55% 45%;
+      position: relative; overflow: hidden;
+    }
+    .hero-copy {
+      background: var(--grove-mid);
+      padding: 80px 60px 80px 80px;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden; z-index: 1;
+    }
+    .hero-copy::before {
+      content: ''; position: absolute; bottom: -140px; left: -100px;
+      width: 500px; height: 500px; border-radius: 50%;
+      border: 1px solid rgba(196,217,188,0.15); pointer-events: none;
+    }
+    .hero-copy::after {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      border: 1px solid rgba(52,211,153,0.18); pointer-events: none;
+    }
+    .hero-copy .slant {
+      position: absolute; top: 0; right: -1px; bottom: 0; width: 80px;
+      background: var(--canvas);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%); z-index: 2;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(52,211,153,0.18); border: 1px solid rgba(52,211,153,0.3);
+      color: white; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 0.38rem 0.9rem; border-radius: 4px;
+      width: fit-content; margin-bottom: 2rem;
+      animation: riseUp 0.7s ease both;
+    }
+    .hero-eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: white; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5vw, 5.2rem); font-weight: 700;
+      color: var(--white); line-height: 1.04; margin-bottom: 1.75rem;
+      animation: riseUp 0.75s 0.1s ease both;
+    }
+    .hero-h1 em { font-style: italic; color: var(--amber-soft); display: block; }
+
+    .hero-sub {
+      font-size: 0.95rem; font-weight: 400; color: rgba(255,255,255,0.65);
+      line-height: 1.8; max-width: 400px; margin-bottom: 2.5rem;
+      animation: riseUp 0.75s 0.2s ease both;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; animation: riseUp 0.75s 0.3s ease both; }
+
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: whitesmoke; color: var(--grove-mid);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.85rem 1.75rem; border-radius: 6px;
+      text-decoration: none; border: none; cursor: pointer; font-family: 'Syne', sans-serif;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-cta:hover { background: var(--grove-mid); color: var(--white); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(52,211,153,0.32); }
+    .btn-cta svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: rgba(255,255,255,0.75);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.85rem 1.5rem; border-radius: 6px;
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.22); cursor: pointer;
+      font-family: 'Syne', sans-serif; transition: all 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.45); color: #fff; }
+    .btn-outline svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      animation: riseUp 0.75s 0.4s ease both;
+    }
+    .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--amber-soft); display: block; line-height: 1; }
+    .stat-lbl { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-top: 4px; display: block; }
+
+    .hero-image { position: relative; overflow: hidden; background: var(--parchment2); }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; animation: heroZoom 20s infinite alternate ease-in-out; }
+    @keyframes heroZoom { from{transform:scale(1)} to{transform:scale(1.06)} }
+
+    .hero-badge {
+      position: absolute; bottom: 2.5rem; left: 2rem;
+      background: var(--white); border-radius: 14px; padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 12px; max-width: 220px;
+    }
+    .hero-badge-icon {
+      width: 42px; height: 42px; flex-shrink: 0; border-radius: 10px;
+      background: var(--parchment2); display: flex; align-items: center; justify-content: center;
+      color: var(--grove); font-size: 1.1rem;
+    }
+    .hero-badge-text strong { display: block; font-size: 0.85rem; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+    .hero-badge-text span { font-size: 0.72rem; color: var(--ink-muted); font-weight: 400; letter-spacing: 0.04em; }
+
+    @keyframes riseUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-image { display: none; }
+      .hero-copy { padding: 72px 2rem 64px; }
+      .hero-copy .slant { display: none; }
+    }
+    @media (max-width: 640px) {
+      .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+      .hero-btns { flex-direction: column; }
+    }
+
+    /* ════════════════════ SECTIONS ════════════════════ */
+    .section { padding: 100px 0; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
+    .sec-head { margin-bottom: 3.5rem; }
+    .sec-head .label { margin-bottom: 0.75rem; display: block; }
+    .sec-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; color: var(--ink); line-height: 1.1; letter-spacing: -0.01em; }
+    .sec-sub { margin-top: 0.75rem; font-size: 0.9rem; font-weight: 400; color: var(--ink-muted); line-height: 1.8; max-width: 500px; }
+    .sec-head-row { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+
+    /* ════════════════════ SERVICES ════════════════════ */
+    .services-bg { background: var(--parchment); }
+    .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    .s-card {
+      background: var(--white); border: 1px solid rgba(22,163,74,0.1);
+      border-radius: 16px; padding: 2.25rem 1.75rem 2rem;
+      position: relative; overflow: hidden;
+      transition: transform 0.35s cubic-bezier(.2,0,.2,1), box-shadow 0.35s;
+    }
+    .s-card:nth-child(2) { margin-top: 1.75rem; }
+    .s-card:nth-child(3) { margin-top: 3.5rem; }
+    .s-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--grove-mid), var(--amber-soft));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease;
+    }
+    .s-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); }
+    .s-card:hover::after { transform: scaleX(1); }
+    .s-num { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700; color: var(--grove-mid); line-height: 1; position: absolute; top: 1.25rem; right: 1.5rem; transition: color 0.35s; }
+    .s-num:hover { color: var(--grove); }
+    .s-card:hover .s-num { color: rgba(22,163,74,0.06); }
+    .s-icon { width: 52px; height: 52px; border-radius: 12px; background: var(--parchment2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; transition: background 0.35s; }
+    .s-card:hover .s-icon { background: var(--grove); }
+    .s-icon svg { width: 24px; height: 24px; stroke: var(--grove-mid); fill: none; stroke-width: 1.6; transition: stroke 0.35s; }
+    .s-card:hover .s-icon svg { stroke: white; }
+    .s-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 0.6rem; line-height: 1.2; }
+    .s-desc { font-size: 0.875rem; color: var(--ink-muted); line-height: 1.75; margin-bottom: 1.5rem; font-weight: 400; }
+    .s-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grove-mid); text-decoration: none; transition: gap 0.2s, color 0.2s; }
+    .s-link:hover { gap: 10px; color: var(--grove); }
+    .s-link svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } .s-card:nth-child(2), .s-card:nth-child(3) { margin-top: 0; } }
+
+    /* ════════════════════ GALLERY ════════════════════ */
+    .gallery-bg { background: var(--canvas); }
+    .gallery-strip { display: flex; gap: 1rem; overflow: hidden; cursor: grab; user-select: none; }
+    .gallery-strip.dragging { cursor: grabbing; }
+    .g-slide { flex-shrink: 0; border-radius: 14px; overflow: hidden; position: relative; }
+    .g-slide:nth-child(odd)  { width: 340px; height: 280px; }
+    .g-slide:nth-child(even) { width: 280px; height: 240px; align-self: flex-end; }
+    .g-slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+    .g-slide:hover img { transform: scale(1.04); }
+    .gallery-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 1.5rem; }
+    .g-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(22,163,74,0.2); background: var(--canvas); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-soft); transition: all 0.2s; }
+    .g-btn:hover { background: var(--grove); color: var(--white); border-color: var(--grove); }
+    .g-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+    /* ════════════════════ NEWS ════════════════════ */
+    .news-bg { background: var(--parchment); }
+    .news-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 1.25rem; align-items: start; }
+    .n-card { background: var(--white); border-radius: 16px; overflow: hidden; border: 1px solid rgba(22,163,74,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+    .n-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+    .n-card.featured .n-img { height: 280px; }
+    .n-card.featured .n-body { padding: 2rem; }
+    .n-card.featured .n-title { font-size: 1.45rem; }
+    .n-img { width: 100%; height: 190px; object-fit: cover; display: block; }
+    .n-body { padding: 1.4rem 1.5rem 1.5rem; }
+    .n-date { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grove-mid); display: block; margin-bottom: 0.5rem; }
+    .n-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); line-height: 1.3; margin-bottom: 0.6rem; }
+    .n-excerpt { font-size: 0.83rem; color: var(--ink-muted); line-height: 1.7; margin-bottom: 1.25rem; }
+    .n-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grove-mid); text-decoration: none; transition: gap 0.2s, color 0.2s; }
+    .n-link:hover { gap: 9px; color: var(--grove); }
+    .n-link svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .btn-dark { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--white); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; border: none; cursor: pointer; font-family: 'Syne', sans-serif; transition: background 0.2s, transform 0.15s; }
+    .btn-dark:hover { background: var(--grove); transform: translateY(-1px); }
+    .btn-dark svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    @media (max-width: 900px) { .news-grid { grid-template-columns: 1fr; } .n-card.featured .n-img { height: 220px; } }
+
+    /* ════════════════════ CTA STRIP ════════════════════ */
+    .cta-strip {
+      background: var(--grove-mid); padding: 80px 0; position: relative; overflow: hidden;
+    }
+    .cta-strip::before {
+      content: ''; position: absolute; top: -150px; right: -100px;
+      width: 450px; height: 450px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08); pointer-events: none;
+    }
+    .cta-strip::after {
+      content: ''; position: absolute; bottom: -100px; left: -80px;
+      width: 300px; height: 300px; border-radius: 50%;
+      border: 1px solid rgba(52,211,153,0.18); pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; text-align: center; }
+    .cta-inner .label { color: var(--amber-soft); margin-bottom: 1rem; display: block; }
+    .cta-h { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 4vw, 3.6rem); font-weight: 700; color: #fff; line-height: 1.08; margin-bottom: 1rem; }
+    .cta-h em { font-style: italic; color: var(--amber-soft); }
+    .cta-sub { font-size: 0.92rem; color: rgba(255,255,255,0.6); max-width: 460px; margin: 0 auto 2.25rem; line-height: 1.75; }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-cta-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: var(--grove-mid);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.9rem 2rem; border-radius: 6px;
+      text-decoration: none; font-family: 'Syne', sans-serif;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.15); }
+    .btn-cta-white svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .btn-outline-white svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+    .btn-outline-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: rgba(255,255,255,0.8);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.9rem 1.75rem; border-radius: 6px;
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.28); font-family: 'Syne', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    /* ════════════════════ TESTIMONIALS ════════════════════ */
+    .testi-bg { background: var(--ink); position: relative; overflow: hidden; }
+    .testi-bg::before { content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; border-radius: 50%; border: 1px solid rgba(196,217,188,0.07); pointer-events: none; }
+    .testi-bg::after  { content: ''; position: absolute; bottom: -150px; left: -100px; width: 400px; height: 400px; border-radius: 50%; border: 1px solid rgba(52,211,153,0.1); pointer-events: none; }
+    .testi-bg .label { color: var(--amber-soft); }
+    .testi-bg .sec-title { color: var(--white); }
+    .testi-bg .sec-sub { color: rgba(255,255,255,0.45); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; margin-top: 3rem; }
+    .t-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 2rem; transition: background 0.3s, border-color 0.3s, transform 0.3s; position: relative; }
+    .t-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(52,211,153,0.25); transform: translateY(-5px); }
+    .t-quote-mark { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 700; color: rgba(52,211,153,0.18); line-height: 1; position: absolute; top: 1rem; right: 1.5rem; }
+    .t-stars { display: flex; gap: 3px; margin-bottom: 1rem; }
+    .t-stars svg { width: 13px; height: 13px; fill: var(--amber-soft); stroke: none; }
+    .t-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; font-weight: 400; color: rgba(255,255,255,0.7); line-height: 1.75; margin-bottom: 1.5rem; }
+    .t-author { display: flex; align-items: center; gap: 10px; }
+    .t-av { width: 38px; height: 38px; border-radius: 50%; background: var(--grove); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--amber-soft); flex-shrink: 0; }
+    .t-name { font-size: 0.85rem; font-weight: 700; color: var(--white); }
+    .t-role { font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 2px; letter-spacing: 0.04em; }
+    .trust-bar { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.07); flex-wrap: wrap; }
+    .trust-item { display: flex; align-items: center; gap: 8px; }
+    .trust-item .t-stars { margin-bottom: 0; }
+    .trust-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.12); }
+    .trust-text { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; }
+    @media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr; } }
+
+    /* ════════════════════ CHATBOT ════════════════════ */
+    .chat-fab { position: fixed; bottom: 2rem; right: 2rem; width: 54px; height: 54px; border-radius: 50%; background: var(--grove); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 28px rgba(22,163,74,0.4); z-index: 300; transition: background 0.2s, transform 0.2s; }
+    .chat-fab:hover { background: var(--grove-mid); transform: scale(1.06); }
+    .chat-fab svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 2; }
+    .chat-widget { position: fixed; bottom: 5.25rem; right: 2rem; width: 350px; max-width: calc(100vw - 2rem); background: var(--white); border: 1px solid rgba(22,163,74,0.12); border-radius: 18px; box-shadow: var(--shadow-lg); display: none; flex-direction: column; overflow: hidden; z-index: 299; }
+    .chat-widget.open { display: flex; animation: chatPop 0.28s ease; }
+    @keyframes chatPop { from{opacity:0;transform:scale(0.9) translateY(10px)} to{opacity:1;transform:none} }
+    .cw-head { background: var(--grove); padding: 0.9rem 1.1rem; display: flex; align-items: center; gap: 10px; }
+    .cw-av { width: 34px; height: 34px; border-radius: 50%; background: var(--grove-mid); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--amber-soft); flex-shrink: 0; }
+    .cw-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
+    .cw-status { font-size: 0.67rem; color: var(--moss); display: flex; align-items: center; gap: 4px; }
+    .cw-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--moss); display: inline-block; }
+    .cw-info { flex: 1; }
+    .cw-close { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); line-height: 1; padding: 2px; }
+    .cw-close:hover { color: #fff; }
+    .cw-close svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+    .cw-msgs { flex: 1; padding: 1rem; height: 270px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.65rem; background: var(--canvas); }
+    .cw-msgs::-webkit-scrollbar { width: 4px; }
+    .cw-msgs::-webkit-scrollbar-thumb { background: var(--moss); border-radius: 4px; }
+    .msg-b, .msg-u { max-width: 82%; padding: 0.6rem 0.85rem; border-radius: 10px; font-size: 0.845rem; line-height: 1.55; }
+    .msg-b { background: var(--white); border: 1px solid var(--parchment2); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 3px; }
+    .msg-u { background: var(--grove); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+    .cw-form { padding: 0.65rem; border-top: 1px solid var(--parchment2); background: var(--white); display: flex; gap: 7px; }
+    .cw-input { flex: 1; border: 1.5px solid var(--parchment2); border-radius: 8px; padding: 0.5rem 0.8rem; font-family: 'Syne', sans-serif; font-size: 0.83rem; outline: none; background: var(--canvas); color: var(--ink); transition: border-color 0.2s; }
+    .cw-input:focus { border-color: var(--grove-light); background: #fff; }
+    .cw-send { width: 36px; height: 36px; border-radius: 8px; background: var(--grove); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .cw-send:hover { background: var(--grove-mid); }
+    .cw-send svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2; }
+
+    /* ════════════════════ FOOTER ════════════════════ */
+    footer { background: #0d1f10; padding: 64px 0 28px; border-top: 4px solid var(--grove); }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .f-brand .logo-name { color: #fff; font-size: 1.25rem; }
+    .f-tagline { font-size: 0.83rem; color: rgba(255,255,255,0.4); line-height: 1.75; margin: 1rem 0 1.5rem; }
+    .f-socials { display: flex; gap: 8px; }
+    .f-social { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); text-decoration: none; transition: all 0.2s; }
+    .f-social:hover { background: var(--grove); border-color: var(--grove); color: #fff; }
+    .f-social svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+    .f-col h5 { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: whitesmoke; margin-bottom: 1.25rem; }
+    .f-col ul { list-style: none; }
+    .f-col ul li { margin-bottom: 0.55rem; }
+    .f-col ul li a { font-size: 0.83rem; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    .f-col ul li a:hover { color: var(--moss); }
+    .f-app { display: flex; flex-direction: column; gap: 10px; }
+    .f-app a { display: inline-block; }
+    .f-app img { height: 36px; border-radius: 6px; }
+    .f-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .f-copy { font-size: 0.85rem; color: rgba(255,255,255,0.25); }
+    .f-legal { display: flex; gap: 1.5rem; }
+    .f-legal a { font-size: 0.85rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
+    .f-legal a:hover { color: rgba(255,255,255,0.55); }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <a href="{{ route('Landing.Page') }}" class="logo">
+    <img src="{{ asset('images/logocoop-removebg-preview-2.png') }}" alt="GBLDC Logo">
+    <span class="logo-name">GBLDC</span>
+  </a>
+
+  <nav class="nav-desktop">
+    <a href="{{ route('Landing.Page') }}">Home</a>
+
+    <div class="dd-wrap">
+      <button class="dd-trigger">
+        Services
+        <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="dd-panel">
+        <a href="{{ route('Guest.Loans') }}">Loans</a>
+        <a href="#">Deposits</a>
+        <a href="#">Savings</a>
+      </div>
+    </div>
+
+    <div class="dd-wrap">
+      <button class="dd-trigger">
+        About
+        <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="dd-panel">
+        <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
+        <a href="#">Board of Directors</a>
+        <a href="#">Committee Officers</a>
+      </div>
+    </div>
+
+    <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
+  </nav>
+
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="{{ route('Member.Login') }}" class="btn-login-header">Login</a>
+    <button class="ham-btn" onclick="toggleMobileNav()">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobile-nav">
+  <a href="{{ route('Landing.Page') }}">Home</a>
+  <div class="mobile-nav-group">
+    <button onclick="this.nextElementSibling.classList.toggle('open')">Services</button>
+    <div class="mobile-sub">
+      <a href="{{ route('Guest.Loans') }}">Loans</a>
+      <a href="#">Deposits</a>
+      <a href="# ">Savings</a>
+    </div>
+  </div>
+  <div class="mobile-nav-group">
+    <button onclick="this.nextElementSibling.classList.toggle('open')">About</button>
+    <div class="mobile-sub">
+      <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
+      <a href="#">Board of Directors</a>
+      <a href="#">Committee Officers</a>
+    </div>
+  </div>
+  <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
+  <div class="mobile-divider"></div>
+  <a href="{{ route('Member.Login') }}" class="mobile-login">Login to Member Portal</a>
+</div>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="hero-copy">
+    <div class="hero-eyebrow"><span class="dot"></span> Trusted Cooperative Since 2014</div>
+    <h1 class="hero-h1">
+      Your Financial<br>
+      <em>Growth,</em>
+      Our Priority
+    </h1>
+    <p class="hero-sub">
+      Building stronger communities through cooperative financial services. Join thousands of members who trust us for their financial future.
+    </p>
+    <div class="hero-btns">
+      <a href="{{ route('Registration.form1') }}" class="btn-cta">
+        Become a Member
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="{{ route('Under.Construction') }}" class="btn-outline">
+        About Membership
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-val">100</span><span class="stat-lbl">Active Members</span></div>
+      <div><span class="stat-val">20+</span><span class="stat-lbl">Years of Service</span></div>
+      <div><span class="stat-val">1</span><span class="stat-lbl">Branch Location</span></div>
+    </div>
+    <div class="slant" aria-hidden="true"></div>
+  </div>
+  <div class="hero-image">
+    <img src="{{ asset('images/meeting-2.png') }}" alt="GBLDC Community">
+    <div class="hero-badge">
+      <div class="hero-badge-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="hero-badge-text">
+        <strong>CDA Registered</strong>
+        <span>Regulated &amp; Secure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SERVICES ═══════════ -->
+<section class="section services-bg">
+  <div class="container">
+    <div class="sec-head">
+      <span class="label">What We Offer</span>
+      <h2 class="sec-title display">Our Services</h2>
+      <p class="sec-sub">Comprehensive financial solutions designed to meet your needs and help you achieve your goals.</p>
+    </div>
+    <div class="services-grid">
+      <div class="s-card">
+        <span class="s-num">01</span>
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="s-title">Flexible Loans</h3>
+        <p class="s-desc">Access competitive loan rates for personal, business, or educational needs with flexible repayment terms tailored just for you.</p>
+        <a href="{{ route('Guest.Loans') }}" class="s-link">Learn More <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="s-card">
+        <span class="s-num">02</span>
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 class="s-title">Secure Deposits</h3>
+        <p class="s-desc">Grow your money safely with our competitive interest rates and secure deposit options that provide lasting peace of mind.</p>
+        <a href="{{ route('Under.Construction') }}" class="s-link">Learn More <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="s-card">
+        <span class="s-num">03</span>
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="s-title">Growth Savings</h3>
+        <p class="s-desc">Secure your future and grow your wealth with our reliable savings options designed to help every member succeed.</p>
+        <a href="{{ route('Under.Construction') }}" class="s-link">Learn More <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ GALLERY ═══════════ -->
+<section class="section gallery-bg">
+  <div class="container">
+    <div class="sec-head-row sec-head">
+      <div>
+        <span class="label">Community Spirit</span>
+        <h2 class="sec-title display">Member Meetings<br>&amp; Events</h2>
+      </div>
+      <p class="sec-sub" style="max-width:300px;margin-top:0;">Moments from our vibrant community of members and leaders.</p>
+    </div>
+  </div>
+  <div style="padding:0 2rem;overflow:hidden;">
+    <div class="gallery-strip" id="gallery-strip">
+      <div class="g-slide"><img src="{{ asset('images/meeting-1.png') }}" alt="Meeting 1"></div>
+      <div class="g-slide"><img src="{{ asset('images/meeting-2.png') }}" alt="Meeting 2"></div>
+      <div class="g-slide"><img src="{{ asset('images/meeting-3.png') }}" alt="Meeting 3"></div>
+      <div class="g-slide"><img src="{{ asset('images/board-group-photo.jpg') }}" alt="Board Group"></div>
+      <div class="g-slide"><img src="{{ asset('images/event4.jpg') }}" alt="Event 4"></div>
+      <div class="g-slide"><img src="{{ asset('images/event2.jpg') }}" alt="Event 5"></div>
+      <div class="g-slide"><img src="{{ asset('images/event3.jpg') }}" alt="Event 6"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="gallery-controls">
+      <button class="g-btn" id="g-prev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="g-btn" id="g-next"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ NEWS ═══════════ -->
+<section class="section news-bg">
+  <div class="container">
+    <div class="sec-head-row sec-head">
+      <div>
+        <span class="label">Stay Informed</span>
+        <h2 class="sec-title display">Latest News<br>&amp; Updates</h2>
+      </div>
+      <a href="{{ route('Guest.NewsEvents') }}" class="btn-dark">
+        View All News
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="news-grid">
+      <article class="n-card featured">
+        <img src="{{ asset('images/event1.jpg') }}" alt="Event 1" class="n-img">
+        <div class="n-body">
+          <span class="n-date">March 22, 2024</span>
+          <h3 class="n-title">22nd Annual General Assembly of Greater Bulacan LDC</h3>
+          <p class="n-excerpt">Held at Cafe De Apati, Makinabang, Baliuag, Bulacan. An engaging discussion on cooperative development and future initiatives for all members.</p>
+          <a href="#" class="n-link">Read Full Story <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+      <article class="n-card">
+        <img src="{{ asset('images/event2.jpg') }}" alt="Event 2" class="n-img">
+        <div class="n-body">
+          <span class="n-date">August 15, 2025</span>
+          <h3 class="n-title">Coop Parade &amp; Launching of Go Koop</h3>
+          <p class="n-excerpt">Empowering cooperatives in celebration of Cooperative Month 2023.</p>
+          <a href="#" class="n-link">Read Full Story <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+      <article class="n-card">
+        <img src="{{ asset('images/event3.jpg') }}" alt="Event 3" class="n-img">
+        <div class="n-body">
+          <span class="n-date">April 12–13, 2025</span>
+          <h3 class="n-title">Family Outing and Team Building</h3>
+          <p class="n-excerpt">A day of fun bonding activities to strengthen our cooperative spirit and teamwork.</p>
+          <a href="#" class="n-link">Read Full Story <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA STRIP ═══════════ -->
+<section class="cta-strip">
+  <div class="container">
+    <div class="cta-inner">
+      <span class="label">Join the Cooperative</span>
+      <h2 class="cta-h">Ready to start your<br><em>financial journey?</em></h2>
+      <p class="cta-sub">Become a member of GBLDC today and gain access to our full range of cooperative financial services built for your community.</p>
+      <div class="cta-btns">
+        <a href="{{ route('Registration.form1') }}" class="btn-cta-white">
+          Apply for Membership
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        <a href="{{ route('Member.Login') }}" class="btn-outline-white">
+          Member Login
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- Desktop Navigation -->
-        <nav
-          class="hidden lg:flex items-center gap-1 xl:gap-4 text-sm xl:text-base font-medium">
-          <a href="{{route('Landing.Page')}}"
-            class="px-2 xl:px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors duration-200">Home</a>
-
-          <!-- Products & Services Dropdown -->
-          <div class="relative group">
-            <button
-              class="flex items-center gap-1 px-2 xl:px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors duration-200 focus:outline-none">
-              <span class="whitespace-nowrap">Services</span>
-              <i
-                class="fas fa-chevron-down text-xs transition-transform group-hover:rotate-180 duration-200"></i>
-            </button>
-            <div
-              class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20">
-              <a href="loan-products.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 rounded-t-lg transition-colors">Loans</a>
-              <a href="deposit.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors">Deposits</a>
-              <a href="savings-page.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 rounded-b-lg transition-colors">Savings</a>
-            </div>
+<!-- ═══════════ TESTIMONIALS ═══════════ -->
+<section class="section testi-bg">
+  <div class="container">
+    <div class="sec-head-row sec-head">
+      <div>
+        <span class="label">Member Voices</span>
+        <h2 class="sec-title display" style="color:var(--white);">What Our Members Say</h2>
+        <p class="sec-sub" style="color:rgba(255,255,255,0.45);">Real stories from the people we've had the privilege of serving.</p>
+      </div>
+      <a href="{{ route('Guest.Testimonials') }}" class="btn-dark" style="background:var(--white);color:var(--ink);">
+        View All Testimonials
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="testi-grid">
+      @if(isset($webContents['testimonial']) && $webContents['testimonial']->count() > 0)
+        @foreach($webContents['testimonial']->take(3) as $testimonial)
+        <div class="t-card">
+          <span class="t-quote-mark">"</span>
+          <div class="t-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
-
-          <!-- About Dropdown -->
-          <div class="relative group">
-            <button
-              class="flex items-center gap-1 px-2 xl:px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors duration-200 focus:outline-none">
-              <span>About</span>
-              <i
-                class="fas fa-chevron-down text-xs transition-transform group-hover:rotate-180 duration-200"></i>
-            </button>
-            <div
-              class="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-20">
-              <a href="about-gbldc.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 rounded-t-lg transition-colors">About
-                GBLDC</a>
-              <a href="board-of-directors.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 transition-colors">Board
-                of Directors</a>
-              <a href="committee-officers.html"
-                class="block px-4 py-3 hover:bg-green-50 hover:text-green-700 rounded-b-lg transition-colors">Committee
-                Officers</a>
-            </div>
+          <p class="t-text">"{{ $testimonial->content }}"</p>
+          <div class="t-author">
+            <div class="t-av">{{ substr($testimonial->title, 0, 1) }}</div>
+            <div><div class="t-name">{{ $testimonial->title }}</div><div class="t-role">{{ $testimonial->subtitle ?? 'Member' }}</div></div>
           </div>
-
-          <a href="news&events.html"
-            class="px-2 xl:px-3 py-2 rounded-md hover:bg-green-50 hover:text-green-700 transition-colors duration-200 whitespace-nowrap">News
-            & Events</a>
-        </nav>
-        <div class="flex items-center gap-3">
-          <a href="{{ route('Member.Login') }}"
-            class="w-full hidden lg:inline-block bg-green-600 text-white px-12 py-2 rounded-full text-sm font-semibold shadow hover:bg-green-700 transition">Login</a>
         </div>
-
-
-        <!-- Mobile menu button -->
-        <button id="mobile-menu-btn"
-          class="lg:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-green-50 transition-colors duration-200"
-          onclick="toggleMobileMenu()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-            class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Mobile Navigation Menu -->
-      <div id="mobile-menu"
-        class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg transform -translate-y-full invisible transition-all duration-300 z-40">
-        <nav class="px-4 sm:px-6 py-4 space-y-1">
-          <!-- Mobile Home Link -->
-          <a href="{{route('Landing.Page')}}"
-            class="block px-4 py-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors font-medium">
-            Home
-          </a>
-
-          <!-- Mobile Products & Services -->
-          <div class="space-y-1">
-            <button onclick="toggleDropdownProductsMobile(event)"
-              class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors font-medium text-left">
-              <span>Services</span>
-              <i id="products-chevron"
-                class="fas fa-chevron-down text-sm transition-transform duration-200"></i>
-            </button>
-            <div id="dropdown-menu-products-mobile"
-              class="hidden ml-4 space-y-1">
-              <a href="loan-products.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">Loans</a>
-              <a href="deposit.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">Deposits</a>
-              <a href="savings-page.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">Savings</a>
-            </div>
-          </div>
-
-          <!-- Mobile About -->
-          <div class="space-y-1">
-            <button onclick="toggleDropdownMobileAbout(event)"
-              class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors font-medium text-left">
-              <span>About</span>
-              <i id="about-chevron"
-                class="fas fa-chevron-down text-sm transition-transform duration-200"></i>
-            </button>
-            <div id="dropdown-menu-about-mobile" class="hidden ml-4 space-y-1">
-              <a href="about-gbldc.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">About
-                GBLDC</a>
-              <a href="board-of-directors.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">Board
-                of Directors</a>
-              <a href="committee-officers.html"
-                class="block px-4 py-2 rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors text-sm">Committee
-                Officers</a>
-            </div>
-          </div>
-
-          <!-- Mobile News & Events -->
-          <a href="news&events.html"
-            class="block px-4 py-3 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors font-medium">
-            News & Events
-          </a>
-        </nav>
-      </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section
-      class="relative w-full min-h-screen flex items-center justify-center md:pt-32 md:pb-20 overflow-hidden">
-      <img src="{{asset('images/meeting-2.png')}}" alt="Hero Banner"
-        class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-        onerror="this.style.display='none'"/>
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-green-700/80 to-green-800/80 opacity-75"></div>
-      <div class="relative z-10 max-w-3xl mx-auto text-center px-4">
-        <h1
-          class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg fade-in">Your
-          Financial Growth,<br><span class="text-green-400">Our
-            Priority</span></h1>
-        <p class="text-lg md:text-2xl text-green-100 mb-8 font-light slide-up">Building
-          stronger communities through cooperative financial services. Join
-          thousands of members who trust us for their financial future.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center slide-up mt-10">
-          <a href="{{route('Registration.form1')}}"
-            class="bg-green-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow hover:bg-green-700 transition">Become
-            a Member</a>
-          <a href="learn-more-about-membership.html"
-            class="border-2 border-white text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-green-700 transition">About Membership</a>
+        @endforeach
+      @else
+      <div class="t-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="t-text">"Kung sa trabaho, halos malaki na din ang nawala sa akin. Pinagpapasalamat ko po sa GBLDC anuman pong naiabot na tulong para makaraos din."</p>
+        <div class="t-author">
+          <div class="t-av">J</div>
+          <div><div class="t-name">Joselito D.C. Gutierrez</div><div class="t-role">Member, Poblacion Branch</div></div>
         </div>
       </div>
-    </section>
-    <!-- Products/Services Section -->
-    <section id="services" class="py-20 bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our
-            Services</h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">Comprehensive
-            financial solutions designed to meet your needs and help you achieve
-            your goals.</p>
+      <div class="t-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Loans Card -->
-          <div
-            class="bg-white rounded-2xl p-8 shadow-lg hover-lift hover:shadow-xl hover-scale">
-            <div
-              class="w-16 h-16  flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="60" height="70"
-                viewBox="0 0 24 24" fill="#0000000">
-                <g clip-path="url(#clip0_4418_169761)">
-                  <path
-                    d="M21.9201 16.7496C21.5901 19.4096 19.4101 21.5896 16.7501 21.9196C15.1401 22.1196 13.6401 21.6796 12.4701 20.8196C11.8001 20.3296 11.9601 19.2896 12.7601 19.0496C15.7701 18.1396 18.1401 15.7596 19.0601 12.7496C19.3001 11.9596 20.3401 11.7996 20.8301 12.4596C21.6801 13.6396 22.1201 15.1396 21.9201 16.7496Z"
-                    fill="white" style="fill: var(--fillg);" />
-                  <path
-                    d="M9.99 2C5.58 2 2 5.58 2 9.99C2 14.4 5.58 17.98 9.99 17.98C14.4 17.98 17.98 14.4 17.98 9.99C17.97 5.58 14.4 2 9.99 2ZM9.05 8.87L11.46 9.71C12.33 10.02 12.75 10.63 12.75 11.57C12.75 12.65 11.89 13.54 10.84 13.54H10.75V13.59C10.75 14 10.41 14.34 10 14.34C9.59 14.34 9.25 14 9.25 13.59V13.53C8.14 13.48 7.25 12.55 7.25 11.39C7.25 10.98 7.59 10.64 8 10.64C8.41 10.64 8.75 10.98 8.75 11.39C8.75 11.75 9.01 12.04 9.33 12.04H10.83C11.06 12.04 11.24 11.83 11.24 11.57C11.24 11.22 11.18 11.2 10.95 11.12L8.54 10.28C7.68 9.98 7.25 9.37 7.25 8.42C7.25 7.34 8.11 6.45 9.16 6.45H9.25V6.41C9.25 6 9.59 5.66 10 5.66C10.41 5.66 10.75 6 10.75 6.41V6.47C11.86 6.52 12.75 7.45 12.75 8.61C12.75 9.02 12.41 9.36 12 9.36C11.59 9.36 11.25 9.02 11.25 8.61C11.25 8.25 10.99 7.96 10.67 7.96H9.17C8.94 7.96 8.76 8.17 8.76 8.43C8.75 8.77 8.81 8.79 9.05 8.87Z"
-                    fill="white" style="fill: var(--fillg);" />
-                </g>
-                <defs>
-                  <clippath id="clip0_4418_169761">
-                    <rect width="24" height="24" fill="white" />
-                  </clippath>
-                </defs>
-              </svg>
-
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Flexible
-              Loans</h3>
-            <p class="text-gray-600 mb-6">Access competitive loan rates for
-              personal, business, or educational needs with flexible repayment
-              terms.</p>
-            <a href="loan-products.html"
-              class="text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">Learn
-              More →</a>
-          </div>
-
-          <div
-            class="bg-white rounded-2xl p-8 shadow-lg hover-lift hover:shadow-xl hover-scale">
-            <div
-              class="w-16 h-16 flex items-center justify-center mb-6">
-              <svg viewBox="0 0 24 24" aria-label="Deposit" role="img"
-                fill="none" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <!-- Base tray -->
-                <path d="M3 17h18v3H3z" />
-                <!-- Arrow down -->
-                <path d="M12 4v8M8 10l4 4 4-4" />
-                <!-- Coin -->
-                <circle cx="12" cy="6" r="2" />
-              </svg>
-
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Secure
-              Deposits</h3>
-            <p class="text-gray-600 mb-6">Grow your savings with competitive
-              interest rates and flexible deposit options tailored to your
-              financial goals.</p>
-            <a href="deposit.html"
-              class="text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">Learn
-              More →</a>
-          </div>
-
-          <!-- Savings Card -->
-          <div
-            class="bg-white rounded-2xl p-8 shadow-lg hover-lift hover:shadow-xl hover-scale">
-            <div
-              class="w-16 h-16 flex items-center justify-center mb-6">
-              <svg viewBox="0 0 24 24" aria-label="Savings jar" role="img"
-                fill="none" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="6" width="12" height="14" rx="3" />
-                <path d="M9 6V4h6v2" />
-                <circle cx="12" cy="11" r="2.25" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">Savings</h3>
-            <p class="text-gray-600 mb-6">Secure your future and grow your
-              wealth
-              with our reliable savings options designed for every member.</p>
-            <a href="savings-page.html"
-              class="text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">Learn
-              More →</a>
-          </div>
+        <p class="t-text">"Napakaganda ng serbisyo ng GBLDC. Nakatulong talaga sa pagpapalaki ng aming negosyo. Ang mga staff ay napakabait at handang tumulong. Salamat!"</p>
+        <div class="t-author">
+          <div class="t-av">M</div>
+          <div><div class="t-name">Maria C. Santos</div><div class="t-role">Business Owner, Baliuag Branch</div></div>
         </div>
-      </section>
-      <!-- Member Meetings Carousel -->
-      <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Member
-              Meetings & Events</h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Stay connected
-              with our community through regular meetings and special
-              events.</p>
-          </div>
-          <div class="relative">
-            <!-- Slick Carousel -->
-            <div class="slick-carousel flex " id="meetings-carousel">
-              <div>
-                <img src="{{asset('images/meeting-1.png')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Meeting 1">
-              </div>
-              <div>
-                <img src="{{asset('images/meeting-2.png')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Meeting 2">
-              </div>
-              <div>
-                <img src="{{asset('images/meeting-3.png')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Meeting 3">
-              </div>
-              <div>
-                <img src="{{asset('images/board-group-photo.jpg')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Board Group">
-              </div>
-              <div>
-                <img src="{{asset('images/event4.jpg')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Event 4">
-              </div>
-              <div>
-                <img src="{{asset('images/event2.jpg')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Event 5">
-              </div>
-              <div>
-                <img src="{{asset('images/event3.jpg')}}"
-                  class="object-cover rounded-xl shadow-lg w-full h-72 md:h-96 px-2"
-                  alt="Event 6">
-              </div>
-            </div>
-            <!-- Slick Dots will appear here -->
-          </div>
+      </div>
+      <div class="t-card">
+        <span class="t-quote-mark">"</span>
+        <div class="t-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         </div>
-        <!-- SlickJS CSS & JS -->
-        <link rel="stylesheet" type="text/css"
-          href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-        <link rel="stylesheet" type="text/css"
-          href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script
-          src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+        <p class="t-text">"Matagal na akong miyembro ng GBLDC at nakita ko kung paano lumago ang kooperatiba. Ang savings programs ay nakatulong sa amin na ma-secure ang future ng pamilya."</p>
+        <div class="t-author">
+          <div class="t-av">R</div>
+          <div><div class="t-name">Roberto M. Cruz</div><div class="t-role">Senior Member, Main Branch</div></div>
+        </div>
+      </div>
+      @endif
+    </div>
+    <div class="trust-bar">
+      <div class="trust-item">
+        <div class="t-stars">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--amber-soft);stroke:none;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--amber-soft);stroke:none;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--amber-soft);stroke:none;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--amber-soft);stroke:none;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--amber-soft);stroke:none;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+      </div>
+      <div class="trust-sep"></div>
+      <span class="trust-text">Trusted by 100+ active members</span>
+      <div class="trust-sep"></div>
+      <span class="trust-text">CDA Registered Cooperative</span>
+    </div>
+  </div>
+</section>
 
-        <!-- News & Events Section -->
-        <section id="news" class="py-20 bg-gray-50">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-              <h2
-                class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Latest
-                News & Updates</h2>
-              <p class="text-xl text-gray-600 max-w-2xl mx-auto">Stay informed
-                with the latest developments and opportunities at GBLDC.</p>
-            </div>
+<!-- ═══════════ CHATBOT ═══════════ -->
+<button class="chat-fab" onclick="toggleChat()" aria-label="Chat with GBLDC">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<div class="chat-widget" id="chat-widget">
+  <div class="cw-head">
+    <div class="cw-av">GB</div>
+    <div class="cw-info">
+      <div class="cw-name">GBLDC Assistant</div>
+      <div class="cw-status">Online</div>
+    </div>
+    <button class="cw-close" onclick="toggleChat()"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="cw-msgs" id="cw-msgs">
+    <div class="msg-b">Welcome to GBLDC! 👋 How can I assist you today with your cooperative needs?</div>
+  </div>
+  <div class="cw-form">
+    <input class="cw-input" id="cw-input" type="text" placeholder="Type your message…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="cw-send" onclick="sendMsg()"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <article
-                class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift hover:shadow-xl hover-scale">
-                <img src="{{asset('images/event1.jpg')}}" alt="Event 1"
-                  class="rounded-t-2xl w-full h-56 object-cover">
-                <div class="p-6">
-                  <span class="text-sm text-green-600 font-semibold mb-6">March
-                    22,
-                    2024</span>
-                  <h3 class="text-xl font-semibold text-gray-900 mt-2 mb-3">22nd
-                    Annual
-                    General Assembly of Greater Bulacan Livelihood Development
-                    Cooperative</h3>
-                  <p class="text-gray-600 mb-4">Held last March 22,
-                    2024 @ Cafe De Apati, Makinabang, Baliuag, Bulacan. Join us
-                    for
-                    an engaging discussion on cooperative development and future
-                    initiatives.</p>
-                  <a href="#"
-                    class="inline-flex items-center text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">
-                    Read More
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
-                </div>
-              </article>
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <a href="{{ route('Landing.Page') }}" class="logo" style="margin-bottom:0.5rem;">
+          <img src="{{ asset('images/logocoop-removebg-preview-2.png') }}" alt="GBLDC Logo" style="width:40px;height:40px;padding:5px;">
+          <span class="logo-name">GBLDC</span>
+        </a>
+        <p class="f-tagline">Greater Bulacan Livelihood Development Cooperative — empowering communities through cooperative financial services.</p>
+        <div class="f-socials">
+          <a href="https://www.facebook.com/profile.php?id=100067957008092" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        </div>
+      </div>
+      <div class="f-col">
+        <h5>Services</h5>
+        <ul>
+          <li><a href="{{ route('Guest.Loans') }}">Loan Services</a></li>
+          <li><a href="{{ route('Under.Construction') }}">Deposit Services</a></li>
+          <li><a href="{{ route('Under.Construction') }}">Savings Services</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>About</h5>
+        <ul>
+          <li><a href="{{ route('Guest.AboutUs') }}">About GBLDC</a></li>
+          <li><a href="{{ route('Under.Construction') }}">Senior Management</a></li>
+          <li><a href="{{ route('Under.Construction') }}">Officers &amp; Committees</a></li>
+          <li><a href="{{ route('Under.Construction') }}">About Membership</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="https://ifernglobal.com.ph/" target="_blank">iFern Global</a></li>
+          <li><a href="{{ route('Member.Login') }}">Member Portal Login</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="{{ route('Registration.form1') }}">Apply Now</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <span class="f-copy">© {{ date('Y') }} Greater Bulacan Livelihood Development Cooperative. All rights reserved.</span>
+      <div class="f-legal">
+        <a href="{{ route('Guest.Policies') }}#privacy">Privacy Policy</a>
+        <a href="{{ route('Guest.Policies') }}#terms">Terms of Service</a>
+        <a href="{{ route('Guest.Policies') }}#cookies">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-              <article
-                class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift hover:shadow-xl hover-scale">
-                <img src="{{asset('images/event2.jpg')}}" alt="Event 2"
-                  class="rounded-t-2xl w-full h-56 object-cover">
-                <div class="p-6">
-                  <span class="text-sm text-green-600 font-semibold">August 15,
-                    2025</span>
-                  <h3
-                    class="text-xl font-semibold text-gray-900 mt-2 mb-3">Coop
-                    Parade,
-                    Kick-Off Ceremony and Launching of Go Koop</h3>
-                  <p class="text-gray-600 mb-4">Empowering
-                    Cooperatives in line with the Celebration of Cooperative
-                    Month
-                    2023. Join us for a day of celebration and awareness of the
-                    cooperative movement in our community.</p>
-                  <a href="#"
-                    class="inline-flex items-center text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">
-                    Read More
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
-                </div>
-              </article>
+<script>
+  // ── Mobile nav ──
+  function toggleMobileNav() {
+    document.getElementById('mobile-nav').classList.toggle('open');
+  }
 
-              <article
-                class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift hover:shadow-xl hover-scale">
-                <img src="{{asset('images/event3.jpg')}}" alt="Event 3"
-                  class="rounded-t-2xl w-full h-56 object-cover">
-                <div class="p-6">
-                  <span class="text-sm text-green-600 font-semibold"> April
-                    12-13, 2025</span>
-                  <h3
-                    class="text-xl font-semibold text-gray-900 mt-2 mb-3">Family
-                    Outing and Team Building</h3>
-                  <p class="text-gray-600 mb-4">Join us for a day of fun and
-                    bonding activities designed to strengthen our cooperative
-                    spirit
-                    and teamwork.</p>
-                  <a href="#"
-                    class="inline-flex items-center text-green-600 font-semibold hover:text-green-800 hover:underline transition-colors">
-                    Read More
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round"  
-                        stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </a>
-                </div>
-              </article>
+  // ── Gallery drag scroll ──
+  const strip = document.getElementById('gallery-strip');
+  let isDragging = false, startX = 0, scrollLeft = 0;
+  strip.addEventListener('mousedown', e => { isDragging = true; startX = e.pageX - strip.offsetLeft; scrollLeft = strip.scrollLeft; strip.classList.add('dragging'); });
+  strip.addEventListener('mouseleave', () => { isDragging = false; strip.classList.remove('dragging'); });
+  strip.addEventListener('mouseup', () => { isDragging = false; strip.classList.remove('dragging'); });
+  strip.addEventListener('mousemove', e => { if (!isDragging) return; e.preventDefault(); strip.scrollLeft = scrollLeft - (e.pageX - strip.offsetLeft - startX) * 1.2; });
+  strip.addEventListener('touchstart', e => { startX = e.touches[0].pageX; scrollLeft = strip.scrollLeft; }, { passive: true });
+  strip.addEventListener('touchmove', e => { strip.scrollLeft = scrollLeft - (e.touches[0].pageX - startX); }, { passive: true });
+  document.getElementById('g-prev').addEventListener('click', () => strip.scrollBy({ left: -340, behavior: 'smooth' }));
+  document.getElementById('g-next').addEventListener('click', () => strip.scrollBy({ left:  340, behavior: 'smooth' }));
+  strip.style.overflowX = 'auto'; strip.style.scrollbarWidth = 'none'; strip.style.msOverflowStyle = 'none'; strip.style.flexWrap = 'nowrap'; strip.style.paddingBottom = '4px';
+  const styleEl = document.createElement('style'); styleEl.textContent = '#gallery-strip::-webkit-scrollbar{display:none}'; document.head.appendChild(styleEl);
 
-              <article class="bg-white rounded-2xl shadow-lg overflow-hidden">
+  // ── Chatbot ──
+  function toggleChat() { document.getElementById('chat-widget').classList.toggle('open'); }
+  function sendMsg() {
+    const inp = document.getElementById('cw-input');
+    const msgs = document.getElementById('cw-msgs');
+    const txt = inp.value.trim(); if (!txt) return;
+    const u = document.createElement('div'); u.className = 'msg-u'; u.textContent = txt;
+    msgs.appendChild(u); inp.value = ''; msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(() => {
+      const b = document.createElement('div'); b.className = 'msg-b';
+      b.textContent = 'Thank you! A GBLDC representative will get back to you shortly.';
+      msgs.appendChild(b); msgs.scrollTop = msgs.scrollHeight;
+    }, 750);
+  }
+</script>
+<!-- ═══════════ COOKIE CONSENT ═══════════ -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cb-content">
+    <div class="cb-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="cb-text">
+      <h4>We Value Your Privacy</h4>
+      <p>GBLDC uses cookies to ensure you get the best experience on our cooperative portal. By continuing to use our site, you agree to our <a href="{{ route('Guest.Policies') }}#cookies">Cookie Policy</a>.</p>
+    </div>
+  </div>
+  <div class="cb-actions">
+    <button class="cb-btn cb-accept" onclick="acceptCookies()">Accept All</button>
+    <button class="cb-btn cb-decline" onclick="declineCookies()">Decline</button>
+  </div>
+</div>
 
-              </div>
+<style>
+/* ════════════════════ COOKIE CONSENT BANNER ════════════════════ */
+.cookie-banner {
+  position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 9999;
+  max-width: 440px; background: var(--white, #ffffff);
+  border: 1px solid rgba(22, 163, 74, 0.15); border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;
+  transform: translateY(150%); opacity: 0; visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease, visibility 0.6s;
+}
+.cookie-banner.show { transform: translateY(0); opacity: 1; visibility: visible; }
+.cb-content { display: flex; gap: 1rem; align-items: flex-start; }
+.cb-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: var(--moss, #dcfce7); color: var(--grove-mid, #15803d);
+  display: flex; align-items: center; justify-content: center;
+}
+.cb-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+.cb-text h4 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink, #1a2e1e); margin-bottom: 0.35rem; }
+.cb-text p { font-size: 0.82rem; color: var(--ink-muted, #4a6b4f); line-height: 1.6; }
+.cb-text a { color: var(--grove, #16a34a); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cb-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+.cb-btn {
+  padding: 0.65rem 1.25rem; border-radius: 8px; font-family: 'Syne', sans-serif;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.cb-accept { background: var(--grove, #16a34a); color: #fff; border: none; }
+.cb-accept:hover { background: var(--grove-mid, #15803d); transform: translateY(-1px); }
+.cb-decline { background: transparent; color: var(--ink-soft, #2d4a32); border: 1px solid rgba(22, 163, 74, 0.25); }
+.cb-decline:hover { background: var(--parchment2, #f0f7f1); }
+@media (max-width: 600px) {
+  .cookie-banner { bottom: 1rem; left: 1rem; right: 1rem; max-width: none; }
+  .cb-actions { flex-direction: column; }
+  .cb-btn { width: 100%; }
+}
+</style>
 
-              <div class="text-center mt-12">
-                <a href="news&events.html"
-                  class="bg-green-700 hover:bg-green-900 text-white px-8 py-3 rounded-full font-semibold transition-colors">
-                  View All News
-                </a>
-              </div>
-            </div>
-          </section>
-          <!-- Testimonial Section -->
-          <section class="bg-white py-20 w-full">
-            <div class="max-w-7xl mx-auto px-4">
-              <div class="text-center mb-16">
-                <h2
-                  class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Member
-                  Feedback</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">What our
-                  partners say about us</p>
-              </div>
-
-              <!-- Swiper Container -->
-              <div class="swiper testimonial-swiper">
-                <div class="swiper-wrapper">
-
-                  <!-- Testimonial 1 -->
-                  <div class="swiper-slide">
-                    <div
-                      class="flex flex-col lg:flex-row items-center gap-12 max-w-6xl mx-auto">
-                      <div class="relative flex-shrink-0">
-                        <img src="{{asset('images/member-testimonial.jpg')}}"
-                          alt="Joselito Gutierrez"
-                          class="member-image">
-                      </div>
-                      <div class="flex-1 max-w-2xl">
-                        <div class="testimonial-card">
-                          <span
-                            class="quote-mark absolute -left-4 -top-2">"</span>
-                          <p
-                            class="text-lg text-gray-800 leading-relaxed mb-6 relative z-10">
-                            Kung sa trabaho, halos malaki na din ang nawala sa
-                            akin. Kaya yung natanggap ko, panggastos ko na din
-                            pambili ng pagkain at vitamins para may malakas na
-                            resistensya. Pinagpapasalamat ko po sa GBLDC anuman
-                            pong naiabot na tulong para makaraos din.
-                          </p>
-                          <span
-                            class="quote-mark absolute -right-4 -bottom-8">"</span>
-
-                          <div class="mt-8 relative z-10">
-                            <h4
-                              class="font-semibold text-gray-900 text-xl mb-1">Joselito
-                              D.C Gutierrez</h4>
-                            <p class="text-gray-600 mb-3">Member, Poblacion
-                              Branch</p>
-                            <div class="star-rating">
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Testimonial 2 -->
-                  <div class="swiper-slide">
-                    <div
-                      class="flex flex-col lg:flex-row items-center gap-12 max-w-6xl mx-auto">
-                      <div class="relative flex-shrink-0">
-                        <img src="{{asset('images/member-tes')}}timonial-2.jpg"
-                          alt="Maria Santos"
-                          class="member-image">
-                      </div>
-                      <div class="flex-1 max-w-2xl">
-                        <div class="testimonial-card">
-                          <span
-                            class="quote-mark absolute -left-4 -top-2">"</span>
-                          <p
-                            class="text-lg text-gray-800 leading-relaxed mb-6 relative z-10">
-                            Napakaganda ng serbisyo ng GBLDC. Nakatulong talaga
-                            sa pagpapalaki ng aming negosyo. Ang mga staff ay
-                            napakabait at handang tumulong. Salamat sa
-                            cooperative na ito!
-                          </p>
-                          <span
-                            class="quote-mark absolute -right-4 -bottom-8">"</span>
-
-                          <div class="mt-8 relative z-10">
-                            <h4
-                              class="font-semibold text-gray-900 text-xl mb-1">Maria
-                              C. Santos</h4>
-                            <p class="text-gray-600 mb-3">Business Owner,
-                              Baliuag Branch</p>
-                            <div class="star-rating">
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Testimonial 3 -->
-                  <div class="swiper-slide">
-                    <div
-                      class="flex flex-col lg:flex-row items-center gap-12 max-w-6xl mx-auto">
-                      <div class="relative flex-shrink-0">
-                        <img src="{{asset('images/member-tes')}}timonial-3.jpg"
-                          alt="Roberto Cruz"
-                          class="member-image">
-                      </div>
-                      <div class="flex-1 max-w-2xl">
-                        <div class="testimonial-card">
-                          <span
-                            class="quote-mark absolute -left-4 -top-2">"</span>
-                          <p
-                            class="text-lg text-gray-800 leading-relaxed mb-6 relative z-10">
-                            Matagal na akong miyembro ng GBLDC at nakita ko kung
-                            paano lumago ang kooperatiba. Ang kanilang savings
-                            programs ay nakatulong sa amin na ma-secure ang
-                            future ng pamilya namin.
-                          </p>
-                          <span
-                            class="quote-mark absolute -right-4 -bottom-8">"</span>
-
-                          <div class="mt-8 relative z-10">
-                            <h4
-                              class="font-semibold text-gray-900 text-xl mb-1">Roberto
-                              M. Cruz</h4>
-                            <p class="text-gray-600 mb-3">Senior Member, Main
-                              Branch</p>
-                            <div class="star-rating">
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                              <i class="fas fa-star"></i>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Navigation -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-
-                <!-- Pagination -->
-                <div class="swiper-pagination"></div>
-              </div>
-
-              <!-- Trust Indicators -->
-              <div class="flex justify-center items-center mt-12 gap-8">
-                <div class="text-center">
-                  <div
-                    class="flex gap-1 text-orange-400 text-lg justify-center mb-2">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                  </div>
-                  <p class="text-sm text-gray-600">Trusted by 1000+ members</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Floating Chatbot Button & Widget -->
-          <button onclick="toggleChatbot()"
-            class="fixed bottom-8 right-8 bg-green-600 hover:bg-green-700 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center z-50 transition-all duration-300 focus:outline-none ring-4 ring-green-300/20 animate-bounce"
-            aria-label="Open Chatbot">
-            <i class="fas fa-comments text-2xl"></i>
-          </button>
-          <div id="chatbot-widget"
-            class="fixed bottom-24 right-8 w-96 max-w-full bg-white rounded-2xl shadow-2xl border border-green-100 flex-col overflow-hidden z-50 hidden transition-all duration-300 animate-fade-in-up animate_faster">
-            <div
-              class="bg-green-600 px-4 py-3 flex items-center gap-3 text-white shadow">
-              <img src="{{asset('images/logocoop-r')}}emovebg-preview 2.png" alt="GBLDC"
-                class="w-8 h-8 rounded-full border-2 border-white shadow" />
-              <span class="font-medium text-left text-base flex-1">Chat with
-                GBLDC</span>
-              <button onclick="toggleChatbot()"
-                class="text-white focus:outline-none hover:text-gray-300 transition-colors"
-                title="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="chat-messages"
-              class="flex-1 p-4 overflow-y-auto text-sm space-y-3 text-black custom-scrollbar scroll-behavior-smooth"
-              style="height: 320px; background: transparent;">
-              <div class="flex items-start gap-2">
-                <img src="{{asset('images/logocoop-r')}}emovebg-preview 2.png"
-                  alt="GBLDC"
-                  class="w-6 h-6 rounded-full border border-green-200" />
-                <div
-                  class="bg-green-100 text-black px-4 py-2 rounded-2xl rounded-bl-none shadow max-w-[100%]">Welcome
-                  to GBLDC Chatbot! How can I assist you today?</div>
-              </div>
-            </div>
-            <div id="typing-indicator"
-              class="px-6 pb-2 text-xs text-gray-500 hidden">
-              <span
-                class="border bg-green-600 text-white py-2 px-2 rounded-lg">GBLDC
-                is
-                typing...</span>
-            </div>
-            <form id="chat-form"
-              class="flex p-2 border-t bg-white/80 backdrop-blur rounded-b-2xl shadow-inner text-black gap-2">
-              <input id="chat-input" type="text"
-                placeholder="Type your message..."
-                class="flex-1 px-4 py-2 border border-green-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-600 text-black transition-shadow shadow-sm" />
-              <button type="submit"
-                class="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 transition-colors shadow"><i
-                  class="fas fa-paper-plane"></i></button>
-            </form>
-          </div>
-        </section>
-
-        <!-- Footer  -->
-        <footer class="bg-green-900 text-white pt-12 pb-4 mt-16">
-          <div class="max-w-7xl mx-auto px-4">
-            <div
-              class="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 text-sm">
-              <div class="flex flex-col items-center md:items-start">
-                <h4
-                  class="font-semibold mb-3 uppercase tracking-wide text-lg">Products</h4>
-                <ul class="space-y-2">
-                  <li><a href="loan-products.html"
-                      class="hover:underline transition-colors">Loan
-                      Products</a></li>
-                  <li><a href="deposit.html"
-                      class="hover:underline transition-colors">Deposit
-                      Products</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors">Savings
-                      Products</a></li>
-                </ul>
-              </div>
-              <div class="flex flex-col items-center md:items-start">
-                <h4
-                  class="font-semibold mb-3 uppercase tracking-wide text-lg">About</h4>
-                <ul class="space-y-2">
-                  <li><a href="about-gbldc.html"
-                      class="hover:underline transition-colors">About
-                      GBLDC</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors duration-200">Senior
-                      Management</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors duration-200">Officers
-                      & Committees</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors duration-200">About Membership</a></li>
-                </ul>
-              </div>
-              <div class="flex flex-col items-center md:items-start">
-                <h4
-                  class="font-semibold mb-3 uppercase tracking-wide text-lg">Quicklinks</h4>
-                <ul class="space-y-2">
-                  <li><a href="https://ifernglobal.com.ph/"
-                      class="hover:underline transition-colors">iFern
-                      Global</a></li>
-                  <li><a href="index.html"
-                      class="hover:underline transition-colors">Member Portal
-                      Login</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors">Contact
-                      Us</a></li>
-                  <li><a href="applynow.html"
-                      class="hover:underline transition-colors">Apply
-                      Now</a></li>
-                  <li><a href="#"
-                      class="hover:underline transition-colors">Feedback</a></li>
-                </ul>
-              </div>
-              <div class="flex flex-col items-center md:items-start">
-                <h4
-                  class="font-semibold mb-3 uppercase tracking-wide text-lg">Get
-                  Our App</h4>
-                <div class="flex gap-2 mb-2">
-                  <a href="https://play.google.com/store" target="_blank"><img
-                      src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                      alt="Google Play" class="h-10 rounded shadow" /></a>
-                  <a href="https://www.apple.com/app-store/"
-                    target="_blank"><img
-                      src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-                      alt="App Store" class="h-10 rounded shadow" /></a>
-                </div>
-                <p class="text-xs text-white">Download our app for a better
-                  banking
-                  experience.</p>
-              </div>
-            </div>
-            <div
-              class="border-t border-green-800 mt-10 pt-6 flex flex-col md:flex-row md:justify-between md:items-center text-xs text-white gap-2">
-              <div class="text-center md:text-left">GREATER BULACAN LIVELIHOOD
-                DEVELOPMENT COOPERATIVE © 2025. ALL RIGHTS RESERVED.</div>
-              <div class="flex space-x-6 mt-4 md:mt-0 md:text-center">
-                <a href="#"
-                  class="text-white text-sm transition-colors hover:underline">Privacy
-                  Policy</a>
-                <a href="#" class="text-white  text-sm transition-colors hover:underline">Terms
-                  of
-                  Service</a>
-                <a href="#" class="text-white  text-sm transition-colors hover:underline">Cookie
-                  Policy</a>
-              </div>
-            </div>
-
-          </div>
-        </footer>
-        <!-- JS SCRIPT -->
-        <script src="../src/javascript/landingpage.js"></script>
-        <script src="../src/javascript/landingpage-user.js"></script>
-      </body>
-    </html>
+<script>
+/* ════════════════════ COOKIE CONSENT LOGIC ════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const cb = document.getElementById('cookieBanner');
+  if (!localStorage.getItem('gbldc_cookie_consent')) {
+    setTimeout(() => { cb.classList.add('show'); }, 1500);
+  }
+});
+function acceptCookies() {
+  localStorage.setItem('gbldc_cookie_consent', 'accepted');
+  document.getElementById('cookieBanner').classList.remove('show');
+}
+function declineCookies() {
+  localStorage.setItem('gbldc_cookie_consent', 'declined');
+  document.getElementById('cookieBanner').classList.remove('show');
+}
+</script>
+</body>
+</html>

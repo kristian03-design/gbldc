@@ -522,7 +522,8 @@
             </tr>
           </thead>
           <tbody>
-            @forelse($payments as $payment)
+            @if(count($payments) > 0)
+            @foreach($payments as $payment)
             <tr
               data-amount="{{ $payment->payment_amount }}"
               data-status="{{ strtolower($payment->payment_status) }}"
@@ -545,18 +546,14 @@
               <td>
                 @php
                   $s = strtolower($payment->payment_status);
-                  $pillClass = match($s) {
-                    'paid'  => 'paid',
-                    'late'  => 'late',
-                    'early' => 'early',
-                    default => 'default',
-                  };
-                  $pillIcon = match($s) {
-                    'paid'  => 'circle-check',
-                    'late'  => 'clock',
-                    'early' => 'zap',
-                    default => 'minus',
-                  };
+                  $pillClass = 'default';
+                  $pillIcon = 'minus';
+
+                  switch($s) {
+                    case 'paid':  $pillClass = 'paid';  $pillIcon = 'circle-check'; break;
+                    case 'late':  $pillClass = 'late';  $pillIcon = 'clock';        break;
+                    case 'early': $pillClass = 'early'; $pillIcon = 'zap';          break;
+                  }
                 @endphp
                 <span class="pill {{ $pillClass }}">
                   <i data-lucide="{{ $pillIcon }}" style="width:10px;height:10px;"></i>
@@ -569,7 +566,8 @@
                 </a>
               </td>
             </tr>
-            @empty
+            @endforeach
+            @else
             <tr>
               <td style="text-align:center;padding:32px;color:var(--muted);" colspan="1">
                 <i data-lucide="inbox" style="width:28px;height:28px;display:block;margin:0 auto 8px;opacity:.3;"></i>
@@ -577,7 +575,7 @@
               </td>
               <td></td><td></td><td></td><td></td><td></td><td></td>
             </tr>
-            @endforelse
+            @endif
           </tbody>
         </table>
       </div>

@@ -74,7 +74,10 @@ class loan extends Model
 
         'approved_by',
         'encoded_by',
-        'due_amount'
+        'reason_for_rejecting',
+        'grace_period',
+        'penalty_type',
+        'penalty_value'
     ];
     
     protected function casts(): array{

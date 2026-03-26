@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\officialmember;
+use App\Models\SharedCapital;
 
 
 class LoanApplication1 extends Controller
@@ -17,6 +18,18 @@ class LoanApplication1 extends Controller
         
         if (!$data) {
             return redirect()->route('Member.Login')->with('error', 'Please login first.');
+        }
+
+        $sharedCapital = SharedCapital::where('member_id', $data)->first();
+        if (!$sharedCapital) {
+            return redirect()->route('Member.Loans')->with('error', 'You must have a Shared Capital account before applying for a loan.');
+        }
+
+        $paidAmount = $sharedCapital->shared_capital_amount_balance - $sharedCapital->shared_capital_amount;
+        $requiredAmount = $sharedCapital->shared_capital_amount_balance * 0.5;
+
+        if ($paidAmount < $requiredAmount) {
+            return redirect()->route('Member.Loans')->with('error', 'You cannot apply for a loan yet. Your Shared Capital must be at least 50% paid.');
         }
         
         $AutoComplete = OfficialMember::where('member_id' , $data)->first();

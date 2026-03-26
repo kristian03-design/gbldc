@@ -134,7 +134,44 @@ class SubmitPayment extends Controller
                 $findLoanRecord->save();
 
                 // Create payment record
-                PaymentModel::create($pay);
+                $paymentRow = PaymentModel::create($pay);
+                
+                // Deduct from schedule table sequentially
+                try {
+                    $remainingPayment = $paymentAmount;
+                    $schedules = \App\Models\LoanSchedule::where('loan_number', $pay['loan_number'])
+                        ->whereIn('status', ['pending', 'partial'])
+                        ->orderBy('due_date', 'asc')
+                        ->get();
+                        
+                    foreach ($schedules as $schedule) {
+                        if ($remainingPayment <= 0) break;
+                        
+                        $dueForThisMonth = (float) $schedule->monthly_payment - (float) $schedule->amount_paid;
+                        
+                        if ($remainingPayment >= $dueForThisMonth) {
+                            $schedule->amount_paid = (float)$schedule->amount_paid + $dueForThisMonth;
+                            $schedule->status = 'paid';
+                            // append payment ID reference
+                            $prevRefs = $schedule->payment_id_reference ? $schedule->payment_id_reference . ',' : '';
+                            $schedule->payment_id_reference = $prevRefs . $paymentRow->id;
+                            $schedule->save();
+                            
+                            $remainingPayment -= $dueForThisMonth;
+                        } else {
+                            $schedule->amount_paid = (float)$schedule->amount_paid + $remainingPayment;
+                            $schedule->status = 'partial';
+                            $prevRefs = $schedule->payment_id_reference ? $schedule->payment_id_reference . ',' : '';
+                            $schedule->payment_id_reference = $prevRefs . $paymentRow->id;
+                            $schedule->save();
+                            
+                            $remainingPayment = 0;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to deduct from loan schedules: ' . $e->getMessage());
+                }
+
                 Log::info('Loan payment created successfully');
                 
                 // Send email notification
@@ -203,6 +240,29 @@ class SubmitPayment extends Controller
                         // Create payment record
                         PaymentModel::create($pay);
                         Log::info('Shared capital payment created successfully');
+                        
+                        // Check for 50% Paid Threshold for Loan Eligibility
+                        $originalTotal = (float) $findSharedCapitalRecord->shared_capital_amount_balance;
+                        $remainingBalance = (float) $newBalance;
+                        $paidAmount = $originalTotal - $remainingBalance;
+                        $requiredAmount = $originalTotal * 0.5;
+
+                        if ($paidAmount >= $requiredAmount) {
+                            $existingNotif = \App\Models\Notification::where('member_id', $findSharedCapitalRecord->member_id)
+                                ->where('type', 'loan_eligibility')
+                                ->first();
+
+                            if (!$existingNotif) {
+                                \App\Models\Notification::create([
+                                    'member_id' => $findSharedCapitalRecord->member_id,
+                                    'title' => 'Loan Eligibility Unlocked!',
+                                    'message' => 'Congratulations! You have paid 50% of your Shared Capital and are now eligible to apply for GBLDC loans.',
+                                    'type' => 'loan_eligibility',
+                                    'is_read' => false
+                                ]);
+                                session()->flash('loan_eligible', true);
+                            }
+                        }
                         
                         // Send email notification
                         $this->sendPaymentNotification(

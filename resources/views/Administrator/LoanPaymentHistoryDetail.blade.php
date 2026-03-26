@@ -69,7 +69,8 @@
               </tr>
             </thead>
             <tbody>
-              @forelse($payments as $payment)
+              @if(count($payments) > 0)
+              @foreach($payments as $payment)
               <tr>
                 <td>{{ \Carbon\Carbon::parse($payment->transaction_date)->format('M d, Y') }}</td>
                 <td>{{ $payment->reference_number }}</td>
@@ -96,11 +97,12 @@
                   </a>
                 </td>
               </tr>
-              @empty
+              @endforeach
+              @else
               <tr>
-                <td colspan="8" class="text-center py-4 text-gray-500">No payment history found for this loan.</td>
+                <td colspan="8" class="text-center py-8 text-gray-500 bg-gray-50/50 rounded-b-xl border-t border-gray-100 italic">No payments found.</td>
               </tr>
-              @endforelse
+              @endif
             </tbody>
           </table>
         </div>

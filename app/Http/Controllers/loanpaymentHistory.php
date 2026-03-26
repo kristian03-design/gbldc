@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use App\Models\paymentModel;
 use Illuminate\Http\Request;
 

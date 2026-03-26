@@ -40,7 +40,7 @@ class PayMongoController extends Controller
 
         $sourceResponse = $this->paymongoService->createSource($amount, $successUrl, $failedUrl, 'gcash');
 
-        if (isset($sourceResponse['data']['attributes']['checkout_url'])) {
+        if (isset($sourceResponse['data']['attributes']['redirect']['checkout_url'])) {
             // Store payment details in session for later use
             session([
                 'gcash_payment' => [
@@ -51,10 +51,16 @@ class PayMongoController extends Controller
                     'source_id' => $sourceResponse['data']['id']
                 ]
             ]);
-            return redirect($sourceResponse['data']['attributes']['checkout_url']);
+            return redirect($sourceResponse['data']['attributes']['redirect']['checkout_url']);
         }
 
-        return back()->with('error', 'Failed to initiate payment.');
+        \Log::error('PayMongo Initiate Failed: ' . json_encode($sourceResponse));
+        $errorMsg = 'Failed to initiate payment. ';
+        if (isset($sourceResponse['errors']) && is_array($sourceResponse['errors'])) {
+            $errorMsg .= $sourceResponse['errors'][0]['detail'] ?? '';
+        }
+
+        return back()->with('error', $errorMsg);
     }
 
     public function handlePaymentSuccess(Request $request)
@@ -90,6 +96,9 @@ class PayMongoController extends Controller
                 'member_copy' => null,
             ];
 
+            // Save to payment table FIRST to get payment ID
+            $createdPayment = \App\Models\PaymentModel::create($paymentRecord);
+
             // Handle different transaction types like SubmitPayment
             if ($paymentData['transaction_type'] === 'Loan Payment' && $paymentData['loan_number']) {
                 $loan = \App\Models\Loan::where('loan_number', $paymentData['loan_number'])->first();
@@ -99,17 +108,74 @@ class PayMongoController extends Controller
                 // Update loan balance
                 $loan->loan_balance -= $paymentData['amount'];
                 $loan->save();
+
+                // Deduct from schedule table sequentially
+                try {
+                    $remainingPayment = $paymentData['amount'];
+                    $schedules = \App\Models\LoanSchedule::where('loan_number', $paymentData['loan_number'])
+                        ->whereIn('status', ['pending', 'partial'])
+                        ->orderBy('due_date', 'asc')
+                        ->get();
+                        
+                    foreach ($schedules as $schedule) {
+                        if ($remainingPayment <= 0) break;
+                        
+                        $dueForThisMonth = (float) $schedule->monthly_payment - (float) $schedule->amount_paid;
+                        
+                        if ($remainingPayment >= $dueForThisMonth) {
+                            $schedule->amount_paid = (float)$schedule->amount_paid + $dueForThisMonth;
+                            $schedule->status = 'paid';
+                            $prevRefs = $schedule->payment_id_reference ? $schedule->payment_id_reference . ',' : '';
+                            $schedule->payment_id_reference = $prevRefs . $createdPayment->id;
+                            $schedule->save();
+                            
+                            $remainingPayment -= $dueForThisMonth;
+                        } else {
+                            $schedule->amount_paid = (float)$schedule->amount_paid + $remainingPayment;
+                            $schedule->status = 'partial';
+                            $prevRefs = $schedule->payment_id_reference ? $schedule->payment_id_reference . ',' : '';
+                            $schedule->payment_id_reference = $prevRefs . $createdPayment->id;
+                            $schedule->save();
+                            
+                            $remainingPayment = 0;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Failed to deduct from loan schedules via PayMongo: ' . $e->getMessage());
+                }
+
             } elseif ($paymentData['transaction_type'] === 'Shared Capital') {
                 $sharedCapital = \App\Models\SharedCapital::where('member_id', $paymentData['member_id'])->first();
                 if ($sharedCapital) {
                     $sharedCapital->shared_capital_amount -= $paymentData['amount'];
+                    if ($sharedCapital->shared_capital_amount <= 0) {
+                        $sharedCapital->status = 'fully paid';
+                    }
                     $sharedCapital->save();
+
+                    // Check for 50% Paid Threshold for Loan Eligibility
+                    $originalTotal = (float) $sharedCapital->shared_capital_amount_balance;
+                    $remainingBalance = (float) $sharedCapital->shared_capital_amount;
+                    $paidAmount = $originalTotal - $remainingBalance;
+                    $requiredAmount = $originalTotal * 0.5;
+
+                    if ($paidAmount >= $requiredAmount) {
+                        $existingNotif = \App\Models\Notification::where('member_id', $sharedCapital->member_id)
+                            ->where('type', 'loan_eligibility')
+                            ->first();
+
+                        if (!$existingNotif) {
+                            \App\Models\Notification::create([
+                                'member_id' => $sharedCapital->member_id,
+                                'title' => 'Loan Eligibility Unlocked!',
+                                'message' => 'Congratulations! You have paid 50% of your Shared Capital and are now eligible to apply for GBLDC loans.',
+                                'type' => 'loan_eligibility',
+                                'is_read' => false
+                            ]);
+                        }
+                    }
                 }
             }
-            // For Time Deposit and Savings, just create the payment record
-
-            // Save to payment table
-            \App\Models\PaymentModel::create($paymentRecord);
 
             // Clear the session
             session()->forget('gcash_payment');
@@ -213,12 +279,53 @@ class PayMongoController extends Controller
             \Log::info('Loan balance updated successfully', ['new_balance' => $loan->loan_balance]);
         } elseif ($request->transaction_type === 'Shared Capital') {
             $sharedCapital = \App\Models\SharedCapital::where('member_id', $request->member_id)->first();
-            if ($sharedCapital) {
-                $sharedCapital->shared_capital_amount -= $request->payment_amount;
-                $sharedCapital->save();
-                \Log::info('Shared capital updated successfully', ['new_amount' => $sharedCapital->shared_capital_amount]);
-            } else {
+            if (!$sharedCapital) {
                 \Log::info('Shared capital record not found for member: ' . $request->member_id);
+                return back()->with('error', 'Shared capital record not found for this member.');
+            }
+
+            $currentBalance = (float) $sharedCapital->shared_capital_amount;
+            $paymentAmount  = (float) $request->payment_amount;
+
+            if ($currentBalance <= 0) {
+                return back()->with('error', 'Shared capital is already fully paid.');
+            }
+
+            if ($paymentAmount > $currentBalance) {
+                return back()->with('error', 'Payment amount (₱' . number_format($paymentAmount, 2) . ') exceeds remaining shared capital balance (₱' . number_format($currentBalance, 2) . ').');
+            }
+
+            $newBalance = $currentBalance - $paymentAmount;
+            $sharedCapital->shared_capital_amount = (string) $newBalance;
+
+            // Mark as fully paid when balance reaches 0
+            if ($newBalance <= 0) {
+                $sharedCapital->status = 'fully paid';
+            }
+
+            $sharedCapital->save();
+            \Log::info('Shared capital updated successfully', ['new_amount' => $newBalance]);
+
+            // Check for 50% Paid Threshold for Loan Eligibility
+            $originalTotal   = (float) $sharedCapital->shared_capital_amount_balance;
+            $paidAmount      = $originalTotal - $newBalance;
+            $requiredAmount  = $originalTotal * 0.5;
+
+            if ($paidAmount >= $requiredAmount) {
+                $existingNotif = \App\Models\Notification::where('member_id', $sharedCapital->member_id)
+                    ->where('type', 'loan_eligibility')
+                    ->first();
+
+                if (!$existingNotif) {
+                    \App\Models\Notification::create([
+                        'member_id' => $sharedCapital->member_id,
+                        'title' => 'Loan Eligibility Unlocked!',
+                        'message' => 'Congratulations! You have paid 50% of your Shared Capital and are now eligible to apply for GBLDC loans.',
+                        'type' => 'loan_eligibility',
+                        'is_read' => false
+                    ]);
+                    session()->flash('loan_eligible', true);
+                }
             }
         }
         // For Time Deposit and Savings, just create the payment record (no balance updates needed)

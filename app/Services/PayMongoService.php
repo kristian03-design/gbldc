@@ -13,17 +13,18 @@ class PayMongoService
     {
         $this->baseUrl = config('services.paymongo.base_url');
         $this->secretKey = config('services.paymongo.secret_key');
+        $this->publicKey = config('services.paymongo.public_key');
     }
 
-    public function createSource($amount, $redirectUrl, $type = 'gcash')
+    public function createSource($amount, $successUrl, $failedUrl, $type = 'gcash')
     {
         $payload = [
             'data' => [
                 'attributes' => [
                     'amount' => $amount,
                     'redirect' => [
-                        'success' => $redirectUrl,
-                        'failed' => $redirectUrl
+                        'success' => $successUrl,
+                        'failed' => $failedUrl
                     ],
                     'type' => $type,
                     'currency' => 'PHP'
@@ -31,7 +32,7 @@ class PayMongoService
             ]
         ];
 
-        $response = Http::withBasicAuth($this->secretKey, '')
+        $response = Http::withBasicAuth($this->publicKey, '')
             ->post("{$this->baseUrl}/sources", $payload);
 
         return $response->json();

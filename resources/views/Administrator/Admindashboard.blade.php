@@ -500,6 +500,9 @@
     </a>
 
     <div class="nav-section-label">System</div>
+    <a href="{{route('Admin.WebContent')}}" class="nav-item">
+      <i data-lucide="layout-template"></i> Web Content
+    </a>
     <a href="{{route('Admin.manage')}}" class="nav-item">
       <i data-lucide="shield-check"></i> Manage Users
     </a>

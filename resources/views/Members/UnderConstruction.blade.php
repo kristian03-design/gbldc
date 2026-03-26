@@ -285,15 +285,15 @@
     </div>
 
     <!-- CTA -->
-    <a href="{{ route('Loan.Dashboard') }}" class="btn-back">
+    <a href="{{ route('Landing.Page') }}" class="btn-back">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back to Dashboard
+      Back to Landing Page
     </a>
 
     <div class="divider"></div>
 
     <p class="footer-note">
-      Need help? <a href="{{ route('Member.ContactUs') }}">Contact our support team</a>
+      Need help? <a href="#">Contact our support team</a>
     </p>
   </div>
 

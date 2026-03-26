@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\adminlist;
 
 class AdminSettingsController extends Controller
 {
@@ -15,6 +16,7 @@ class AdminSettingsController extends Controller
 
     public function updateProfile(Request $request)
     {
+        /** @var \App\Models\adminlist $admin */
         $admin = Auth::guard('admin')->user();
 
         $validated = $request->validate([
@@ -31,6 +33,7 @@ class AdminSettingsController extends Controller
 
     public function updatePassword(Request $request)
     {
+        /** @var \App\Models\adminlist $admin */
         $admin = Auth::guard('admin')->user();
 
         $validated = $request->validate([
