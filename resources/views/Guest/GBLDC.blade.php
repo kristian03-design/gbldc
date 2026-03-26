@@ -500,6 +500,7 @@
     </div>
 
     <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
+    <a href="{{ route('Guest.Testimonials') }}">Testimonials</a>
   </nav>
 
   <div style="display:flex;align-items:center;gap:12px;">
@@ -529,6 +530,7 @@
     </div>
   </div>
   <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
+  <a href="{{ route('Guest.Testimonials') }}">Testimonials</a>
   <div class="mobile-divider"></div>
   <a href="{{ route('Member.Login') }}" class="mobile-login">Login to Member Portal</a>
 </div>

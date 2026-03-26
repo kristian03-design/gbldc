@@ -309,6 +309,7 @@
     </div>
 
     <a href="{{ route('Member.NewsEvents') }}">News & Events</a>
+    <a href="{{ route('Member.Testimonials') }}">Testimonials</a>
   </nav>
 
   <div style="display:flex;align-items:center;gap:12px;">
@@ -352,6 +353,7 @@
     </div>
   </div>
   <a href="{{ route('Under.Construction') ?? '#' }}">News & Events</a>
+  <a href="{{ route('Member.Testimonials') }}">Testimonials</a>
   <div class="mobile-divider"></div>
   <a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a>
   <a href="{{ route('Member.Notifications') }}">Notifications</a>
