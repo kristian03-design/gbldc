@@ -571,7 +571,7 @@
         <div class="dd-panel">
           <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
           <a href="{{ route('Under.Construction') }}">Mission &amp; Vision</a>
-          <a href="{{ route('Under.Construction') }}">Board of Directors</a>
+          <a href="{{ route('Member.BOD') }}">Board of Directors</a>
           <a href="{{ route('Under.Construction') }}">Committee Officers</a>
         </div>
       </div>
@@ -615,7 +615,7 @@
       <div class="mobile-sub">
         <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
         <a href="{{ route('Under.Construction') }}">Mission &amp; Vision</a>
-        <a href="{{ route('Under.Construction') }}">Board of Directors</a>
+        <a href="{{ route('Member.BOD') }}">Board of Directors</a>
         <a href="{{ route('Under.Construction') }}">Committee Officers</a>
       </div>
     </div>

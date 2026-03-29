@@ -9,6 +9,7 @@ class LandingPageContent extends Model
     protected $fillable = [
         'target_audience',
         'section_type',
+        'category',
         'title',
         'subtitle',
         'content',

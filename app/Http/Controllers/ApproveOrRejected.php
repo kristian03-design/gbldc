@@ -20,9 +20,21 @@ class ApproveOrRejected extends Controller
     public function ApproveOrRejected(Request $request){
         $decision = $request->validate([
             'id' => 'required',
-            'member_id' => 'required',
         ]);
-        $memberid = $decision['member_id'];
+
+        // ── Auto-generate Member ID in GBLDC-XXXX format ──────────────────────
+        // Pull all existing GBLDC-XXXX member IDs from officialmembers table.
+        $existingNumbers = officialmember::whereRaw("member_id REGEXP '^GBLDC-[0-9]+$'")
+            ->pluck('member_id')
+            ->map(fn ($id) => (int) substr($id, 6)) // strip 'GBLDC-'
+            ->all();
+
+        $maxNumber = count($existingNumbers) > 0 ? max($existingNumbers) : 0;
+
+        // Base must be at least 2000; first new ID will be 2001.
+        $nextNumber = max($maxNumber, 2000) + 1;
+        $memberid   = 'GBLDC-' . $nextNumber;
+        // ──────────────────────────────────────────────────────────────────────
         $find = registrationModel::where('id', $decision['id'])->first();
         if (!$find) {
             return redirect()->back()->with('error', 'Registration not found.');

@@ -110,9 +110,11 @@
     }
     .icon-ring i[data-lucide] {
       width: 38px; height: 38px;
-      color: var(--emerald);
+      color: whitesmoke;
       filter: drop-shadow(0 0 8px rgba(34,197,94,.5));
+      animation: popIn .6s .2s cubic-bezier(.22,.68,0,1.4) both;
     }
+   
 
     .card-banner h1 {
       font-family: 'Playfair Display', serif;

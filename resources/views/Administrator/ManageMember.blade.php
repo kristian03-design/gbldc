@@ -296,20 +296,6 @@
     /* ── Action buttons ── */
     .action-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
-    .member-id-input {
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 12px;
-      font-family: 'DM Sans', sans-serif;
-      outline: none;
-      width: 130px;
-      transition: border-color .2s;
-      color: var(--ink);
-      background: var(--white);
-    }
-    .member-id-input:focus { border-color: var(--emerald); }
-    .member-id-input::placeholder { color: #9ca3af; }
 
     .action-btn {
       display: inline-flex; align-items: center; gap: 5px;
@@ -460,7 +446,7 @@
     <!-- Page header -->
     <div class="page-header">
       <h2>Manage Membership Registrations</h2>
-      <p>Review pending applications and assign member IDs before approval.</p>
+      <p>Review pending applications and approve or reject them. Member IDs are assigned automatically.</p>
     </div>
 
     <!-- Table card -->
@@ -499,9 +485,8 @@
               <td>
                 <div class="action-group">
                   <!-- Approve -->
-                  <form action="{{route('Approve.member')}}" method="POST" style="display:flex;align-items:center;gap:6px;">
+                  <form action="{{route('Approve.member')}}" method="POST" style="display:inline;">
                     @csrf
-                    <input type="text" name="member_id" class="member-id-input" placeholder="Assign Member ID">
                     <input type="hidden" name="id" value="{{ $member_detail->id }}">
                     <button type="submit" class="action-btn approve">
                       <i data-lucide="check"></i> Approve

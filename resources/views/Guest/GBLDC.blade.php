@@ -465,6 +465,128 @@
 </head>
 <body>
 
+<!-- ═══════════ SITE BANNER MODAL ═══════════ -->
+@php
+  $activeBanner = isset($webContents['banner']) ? $webContents['banner']->first() : null;
+@endphp
+@if($activeBanner)
+<div id="site-global-banner" class="global-banner-modal" data-banner-id="{{ $activeBanner->id }}">
+  <div class="gb-modal-content {{ $activeBanner->image_path ? 'has-image' : '' }}">
+    <button class="gb-modal-close" onclick="dismissBanner('{{ $activeBanner->id }}')"><i class="fas fa-times"></i></button>
+    
+    @if($activeBanner->image_path)
+      <div class="gb-modal-image" style="background-image: url('{{ asset($activeBanner->image_path) }}');"></div>
+    @endif
+    
+    <div class="gb-modal-body">
+      <div class="gb-modal-badge category-{{ $activeBanner->category }}">
+        @if($activeBanner->category === 'announcement') <i class="fas fa-bullhorn"></i> Announcement
+        @elseif($activeBanner->category === 'promotions') <i class="fas fa-tag"></i> Promotion
+        @elseif($activeBanner->category === 'events') <i class="fas fa-calendar-alt"></i> Event
+        @elseif($activeBanner->category === 'updates') <i class="fas fa-sync"></i> Update
+        @endif
+      </div>
+      
+      <h3 class="gb-modal-title">{{ $activeBanner->title }}</h3>
+      
+      @if($activeBanner->content)
+        <p class="gb-modal-desc">{{ $activeBanner->content }}</p>
+      @endif
+      
+      @if($activeBanner->link_url)
+        <a href="{{ $activeBanner->link_url }}" class="gb-modal-btn" target="_blank">Learn More <i class="fas fa-arrow-right"></i></a>
+      @endif
+    </div>
+  </div>
+</div>
+<style>
+.global-banner-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(13, 31, 16, 0.65); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 1; transition: opacity 0.4s ease;
+}
+.global-banner-modal.dismissed {
+  opacity: 0; pointer-events: none;
+}
+.gb-modal-content {
+  background: #fff; border-radius: 20px; width: 100%; max-width: 520px;
+  position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column;
+  transform: translateY(0) scale(1); transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.global-banner-modal.dismissed .gb-modal-content {
+  transform: translateY(30px) scale(0.95);
+}
+.gb-modal-content.has-image { max-width: 850px; flex-direction: row; }
+.gb-modal-image {
+  flex: 1.1; min-height: 250px; background-size: cover; background-position: center;
+}
+.gb-modal-body {
+  flex: 1; padding: 3.5rem 3rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+}
+.gb-modal-close {
+  position: absolute; top: 18px; right: 18px; width: 34px; height: 34px;
+  border-radius: 50%; background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-muted); font-size: 15px; transition: all 0.2s; z-index: 10;
+}
+.gb-modal-close:hover { background: #e74c3c; color: #fff; transform: rotate(90deg); }
+
+.gb-modal-badge {
+  font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 1.25rem;
+}
+.gb-modal-badge.category-announcement { background: var(--amber-pale); color: var(--amber); }
+.gb-modal-badge.category-promotions { background: #fef08a; color: #854d0e; }
+.gb-modal-badge.category-events { background: #dbeafe; color: #1e40af; }
+.gb-modal-badge.category-updates { background: #dcfce7; color: #166534; }
+.gb-modal-badge.category- { background: var(--parchment2); color: var(--ink-muted); }
+
+.gb-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; color: var(--ink); line-height: 1.1; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.gb-modal-desc { font-family: 'Syne', sans-serif; font-size: 0.95rem; color: var(--ink-muted); line-height: 1.6; margin-bottom: 2rem; }
+.gb-modal-btn {
+  display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  background: var(--grove); color: #fff;
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 1rem 2.5rem; border-radius: 8px; text-decoration: none;
+  font-family: 'Syne', sans-serif; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 8px 20px rgba(22,163,74,0.25); width: 100%;
+}
+.gb-modal-btn:hover { background: var(--grove-mid); transform: translateY(-2px); box-shadow: 0 12px 25px rgba(22,163,74,0.35); }
+
+@media (max-width: 768px) {
+  .gb-modal-content.has-image { flex-direction: column; max-width: 450px; }
+  .gb-modal-image { min-height: 220px; }
+  .gb-modal-body { padding: 2.5rem 1.75rem; }
+  .gb-modal-title { font-size: 2rem; }
+}
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('site-global-banner');
+    if (banner && sessionStorage.getItem('gbldc_dismissed_banner_' + banner.dataset.bannerId)) {
+      banner.classList.add('dismissed');
+      // Set display none after animation technically, but since it's on load, hidden handles it
+      banner.style.display = 'none';
+      document.body.style.overflow = '';
+    } else if (banner) {
+      document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is active
+    }
+  });
+  
+  function dismissBanner(id) {
+    sessionStorage.setItem('gbldc_dismissed_banner_' + id, 'true');
+    const banner = document.getElementById('site-global-banner');
+    if(banner) {
+      banner.classList.add('dismissed');
+      document.body.style.overflow = '';
+      setTimeout(() => { banner.style.display = 'none'; }, 400); // match transition
+    }
+  }
+</script>
+@endif
+
 <!-- ═══════════ HEADER ═══════════ -->
 <header>
   <a href="{{ route('Landing.Page') }}" class="logo">
@@ -494,7 +616,7 @@
       </button>
       <div class="dd-panel">
         <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-        <a href="#">Board of Directors</a>
+        <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
         <a href="#">Committee Officers</a>
       </div>
     </div>
@@ -525,7 +647,7 @@
     <button onclick="this.nextElementSibling.classList.toggle('open')">About</button>
     <div class="mobile-sub">
       <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-      <a href="#">Board of Directors</a>
+      <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
       <a href="#">Committee Officers</a>
     </div>
   </div>
@@ -664,7 +786,7 @@
         <img src="{{ asset('images/event1.jpg') }}" alt="Event 1" class="n-img">
         <div class="n-body">
           <span class="n-date">March 22, 2024</span>
-          <h3 class="n-title">22nd Annual General Assembly of Greater Bulacan LDC</h3>
+          <h3 class="n-title">22nd Annual General Assembly of Greater Bulacan Livelihood Development Cooperative</h3>
           <p class="n-excerpt">Held at Cafe De Apati, Makinabang, Baliuag, Bulacan. An engaging discussion on cooperative development and future initiatives for all members.</p>
           <a href="#" class="n-link">Read Full Story <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>

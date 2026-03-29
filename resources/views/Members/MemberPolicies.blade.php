@@ -97,6 +97,46 @@
     }
     .dd-panel a:hover { background: var(--parchment2); color: var(--grove); }
 
+    /* profile button */
+    .profile-wrap { position: relative; }
+    .profile-btn { display: flex; align-items: center; gap: 7px; cursor: pointer; background: none; border: none; padding: 0; }
+    .profile-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--moss); }
+    .profile-chevron { font-size: 0.65rem; color: var(--ink-muted); transition: transform 0.2s; }
+    .profile-wrap:hover .profile-chevron { transform: rotate(180deg); }
+
+    .profile-panel {
+      position: absolute; right: 0; top: calc(100% + 8px); width: 220px;
+      background: var(--white); border: 1px solid rgba(22,163,74,0.12); border-radius: 14px;
+      padding: 0.5rem; box-shadow: var(--shadow-lg); opacity: 0; visibility: hidden;
+      transform: translateY(6px); transition: all 0.2s;
+    }
+    .profile-wrap:hover .profile-panel { opacity: 1; visibility: visible; transform: none; }
+    .profile-panel a {
+      display: block; padding: 0.6rem 0.85rem; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+      color: var(--ink-soft); text-decoration: none; border-radius: 8px; transition: background 0.15s, color 0.15s;
+    }
+    .profile-panel a:hover { background: var(--parchment2); color: var(--grove); }
+    .profile-panel .divider { height: 1px; background: var(--parchment2); margin: 0.4rem 0; }
+    .profile-panel .danger { color: #c0392b !important; }
+    .profile-panel .danger:hover { background: #fff0ee !important; color: #c0392b !important; }
+
+    /* ════════════════════ LOGOUT MODAL ════════════════════ */
+    .modal-bg { position: fixed; inset: 0; background: rgba(26,46,30,0.55); backdrop-filter: blur(4px); z-index: 500; display: none; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal-box { background: var(--white); border-radius: 18px; padding: 2.25rem; width: 380px; max-width: 90vw; box-shadow: var(--shadow-lg); text-align: center; animation: chatPop 0.28s ease; }
+    @keyframes chatPop { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { width: 52px; height: 52px; border-radius: 14px; background: #fff0ee; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center; }
+    .modal-icon svg { width: 24px; height: 24px; stroke: #c0392b; fill: none; stroke-width: 2; }
+    .modal-h { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
+    .modal-p { font-size: 0.875rem; color: var(--ink-muted); line-height: 1.65; margin-bottom: 1.75rem; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .btn-ghost { padding: 0.65rem 1.4rem; border-radius: 8px; border: 1.5px solid rgba(22,163,74,0.2); background: transparent; color: var(--ink-soft); font-family: 'Syne', sans-serif; font-size: 0.83rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-ghost:hover { background: var(--parchment2); }
+    .btn-danger { padding: 0.65rem 1.4rem; border-radius: 8px; border: none; background: #c0392b; color: #fff; font-family: 'Syne', sans-serif; font-size: 0.83rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
+    .btn-danger:hover { background: #a93226; }
+
+    @media (max-width: 1024px) { .nav-desktop { display: none; } .btn-login-header { display: none; } .ham-btn { display: flex; } }
+
     .btn-login-header {
       display: inline-flex; align-items: center; gap: 7px;
       background: var(--grove); color: #fff;
@@ -273,35 +313,58 @@
 
 <!-- ═══════════ HEADER ═══════════ -->
 <header>
-  <a href="{{ route('Landing.Page') }}" class="logo">
-    <img src="{{ asset('images/logocoop-removebg-preview-2.png') }}" alt="GBLDC Logo">
+  <a href="{{ route('Member.Landing') }}" class="logo">
+    <img src="{{asset('images/logocoop-removebg-preview-2.png')}}" alt="GBLDC Logo">
     <span class="logo-name">GBLDC</span>
   </a>
 
   <nav class="nav-desktop">
-    <a href="{{ route('Landing.Page') }}">Home</a>
+    <a href="{{ route('Member.Landing') }}">Home</a>
+
     <div class="dd-wrap">
-      <button class="dd-trigger">Services <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button class="dd-trigger">
+        Products & Services
+        <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
       <div class="dd-panel">
-        <a href="{{ route('Guest.Loans') }}">Loans</a>
-        <a href="{{ route('Under.Construction') }}">Deposits</a>
-        <a href="{{ route('Under.Construction') }}">Savings</a>
+        <a href="{{ route('Member.Loans') }}">Loans</a>
+        <a href="{{ route('Under.Construction') ?? '#' }}">Deposits</a>
+        <a href="{{ route('Under.Construction') ?? '#' }}">Savings</a>
       </div>
     </div>
+
     <div class="dd-wrap">
-      <button class="dd-trigger">About <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button class="dd-trigger">
+        About
+        <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
       <div class="dd-panel">
-        <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-        <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
-        <a href="{{ route('Under.Construction') }}">Committee Officers</a>
+        <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
+        <a href="{{ route('Member.AboutUs') }}">Mission & Vision</a>
+        <a href="{{ route('Member.BOD') }}">Board of Directors</a>
+        <a href="{{ route('Under.Construction') ?? '#' }}">Committee Officers</a>
       </div>
     </div>
-    <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
-    <a href="{{ route('Guest.Testimonials') }}">Testimonials</a>
+
+    <a href="{{ route('Member.NewsEvents') }}">News & Events</a>
+    <a href="{{ route('Member.Testimonials') }}">Testimonials</a>
   </nav>
 
   <div style="display:flex;align-items:center;gap:12px;">
-    <a href="{{ route('Member.Login') }}" class="btn-login-header">Login</a>
+    <div class="profile-wrap nav-desktop" style="display:flex;">
+      <button class="profile-btn" style="cursor:pointer;">
+         <img src="{{ asset('images/profile.png') }}" alt="Profile" class="profile-img">
+         <i class="fas fa-chevron-down profile-chevron"></i>
+      </button>
+      <div class="profile-panel">
+        <a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a>
+        <a href="{{ route('Member.Notifications') }}">Notifications</a>
+        <a href="{{ route('Member.AccountSettings') }}">Settings</a>
+        <a href="{{ route('Member.ContactUs') }}">Help & Support</a>
+        <div class="divider"></div>
+        <a href="#" class="danger" onclick="openLogoutModal()">Logout</a>
+      </div>
+    </div>
     <button class="ham-btn" onclick="toggleMobileNav()">
       <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
@@ -309,27 +372,45 @@
 </header>
 
 <div class="mobile-nav" id="mobile-nav">
-  <a href="{{ route('Landing.Page') }}">Home</a>
+  <a href="{{ route('Member.Landing') }}">Home</a>
   <div class="mobile-nav-group">
-    <button onclick="this.nextElementSibling.classList.toggle('open')">Services</button>
+    <button onclick="this.nextElementSibling.classList.toggle('open')">Products & Services</button>
     <div class="mobile-sub">
-      <a href="{{ route('Guest.Loans') }}">Loans</a>
-      <a href="{{ route('Under.Construction') }}">Deposits</a>
-      <a href="{{ route('Under.Construction') }}">Savings</a>
+      <a href="{{ route('Member.Loans') }}">Loans</a>
+      <a href="{{ route('Under.Construction') ?? '#' }}">Deposits</a>
+      <a href="{{ route('Under.Construction') ?? '#' }}">Savings</a>
     </div>
   </div>
   <div class="mobile-nav-group">
     <button onclick="this.nextElementSibling.classList.toggle('open')">About</button>
     <div class="mobile-sub">
-      <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-      <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
-      <a href="{{ route('Under.Construction') }}">Committee Officers</a>
+      <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
+      <a href="{{ route('Member.AboutUs') }}">Mission & Vision</a>
+      <a href="{{ route('Member.BOD') }}">Board of Directors</a>
+      <a href="{{ route('Under.Construction') ?? '#' }}">Committee Officers</a>
     </div>
   </div>
-  <a href="{{ route('Guest.NewsEvents') }}">News &amp; Events</a>
-  <a href="{{ route('Guest.Testimonials') }}">Testimonials</a>
+  <a href="{{ route('Under.Construction') ?? '#' }}">News & Events</a>
+  <a href="{{ route('Member.Testimonials') }}">Testimonials</a>
   <div class="mobile-divider"></div>
-  <a href="{{ route('Member.Login') }}" class="mobile-login">Login to Member Portal</a>
+  <a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a>
+  <a href="{{ route('Member.Notifications') }}">Notifications</a>
+  <a href="{{ route('Member.AccountSettings') }}">Settings</a>
+  <a href="{{ route('Member.ContactUs') }}">Help & Support</a>
+  <a href="#" style="color:#c0392b;" onclick="openLogoutModal()">Logout</a>
+</div>
+
+<!-- ═══════════ LOGOUT MODAL ═══════════ -->
+<div class="modal-bg" id="logout-modal">
+  <div class="modal-box">
+    <div class="modal-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>
+    <h3 class="modal-h">Sign Out</h3>
+    <p class="modal-p">Are you sure you want to log out of your member account? You will need to sign in again to access the portal.</p>
+    <div class="modal-btns">
+      <button class="btn-ghost" onclick="closeLogoutModal()">Cancel</button>
+      <a href="{{ route('Landing.Page') }}" class="btn-danger">Yes, Sign Out</a>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════ HERO ═══════════ -->
@@ -435,49 +516,48 @@
   <div class="container">
     <div class="footer-grid">
       <div class="f-brand">
-        <a href="{{ route('Landing.Page') }}" class="logo" style="margin-bottom:0.5rem;">
-          <img src="{{ asset('images/logocoop-removebg-preview-2.png') }}" alt="GBLDC Logo" style="width:40px;height:40px;padding:5px;">
+        <a href="{{ route('Member.Landing') }}" class="logo" style="margin-bottom:0.5rem;">
+          <img src="{{asset('images/logocoop-removebg-preview-2.png')}}" alt="GBLDC Logo" style="width:40px;height:40px;padding:5px;">
           <span class="logo-name">GBLDC</span>
         </a>
         <p class="f-tagline">Greater Bulacan Livelihood Development Cooperative — empowering communities through cooperative financial services.</p>
         <div class="f-socials">
-          <a href="https://www.facebook.com/profile.php?id=100067957008092" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="https://www.facebook.com/profile.php?id=100067957008092" class="f-social" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
           <a href="#" class="f-social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
         </div>
       </div>
       <div class="f-col">
         <h5>Services</h5>
         <ul>
-          <li><a href="{{ route('Guest.Loans') }}">Loan Services</a></li>
-          <li><a href="{{ route('Under.Construction') }}">Deposit Services</a></li>
-          <li><a href="{{ route('Under.Construction') }}">Savings Services</a></li>
+          <li><a href="{{ route('Member.Loans') }}">Loan Services</a></li>
+          <li><a href="{{ route('Under.Construction') ?? '#' }}">Deposit Services</a></li>
+          <li><a href="{{ route('Under.Construction') ?? '#' }}">Savings Services</a></li>
         </ul>
       </div>
       <div class="f-col">
         <h5>About</h5>
         <ul>
-          <li><a href="{{ route('Guest.AboutUs') }}">About GBLDC</a></li>
-          <li><a href="{{ route('Under.Construction') }}">Senior Management</a></li>
-          <li><a href="{{ route('Under.Construction') }}">Officers &amp; Committees</a></li>
-          <li><a href="{{ route('Under.Construction') }}">About Membership</a></li>
+          <li><a href="{{ route('Member.AboutUs') }}">About GBLDC</a></li>
+          <li><a href="{{ route('Under.Construction') ?? '#' }}">Senior Management</a></li>
+          <li><a href="{{ route('Under.Construction') ?? '#' }}">Officers &amp; Committees</a></li>
+          <li><a href="{{ route('Under.Construction') ?? '#' }}">About Membership</a></li>
         </ul>
       </div>
       <div class="f-col">
         <h5>Quick Links</h5>
         <ul>
           <li><a href="https://ifernglobal.com.ph/" target="_blank">iFern Global</a></li>
-          <li><a href="{{ route('Member.Login') }}">Member Portal Login</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="{{ route('Registration.form1') }}">Apply Now</a></li>
+          <li><a href="{{ route('Loan.Dashboard') }}">Loan Dashboard</a></li>
+          <li><a href="{{ route('Member.ContactUs') }}">Contact Us</a></li>
         </ul>
       </div>
     </div>
     <div class="f-bottom">
       <span class="f-copy">© {{ date('Y') }} Greater Bulacan Livelihood Development Cooperative. All rights reserved.</span>
       <div class="f-legal">
-        <a href="{{ route('Guest.Policies') }}#privacy">Privacy Policy</a>
-        <a href="{{ route('Guest.Policies') }}#terms">Terms of Service</a>
-        <a href="{{ route('Guest.Policies') }}#cookies">Cookie Policy</a>
+        <a href="{{ route('Member.Policies') }}#privacy">Privacy Policy</a>
+        <a href="{{ route('Member.Policies') }}#terms">Terms of Service</a>
+        <a href="{{ route('Member.Policies') }}#cookies">Cookie Policy</a>
       </div>
     </div>
   </div>
@@ -521,6 +601,16 @@
     if(hash && ['privacy', 'terms', 'cookies'].includes(hash)) {
       switchPolicy(hash);
     }
+  });
+
+  function openLogoutModal() {
+    document.getElementById('logout-modal').classList.add('open');
+  }
+  function closeLogoutModal() {
+    document.getElementById('logout-modal').classList.remove('open');
+  }
+  document.getElementById('logout-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeLogoutModal();
   });
 </script>
 

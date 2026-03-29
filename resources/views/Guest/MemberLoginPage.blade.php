@@ -370,6 +370,34 @@
       letter-spacing: 0.02em;
     }
 
+    /* ── BACK BUTTON ── */
+    .back-btn {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #d6eedd;
+      background: var(--white);
+      transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+      z-index: 10;
+      letter-spacing: 0.03em;
+    }
+    .back-btn:hover {
+      background: var(--green-pale);
+      color: var(--green-mid);
+      border-color: var(--green-light);
+      box-shadow: 0 2px 10px rgba(39,174,96,0.12);
+    }
+    .back-btn i { font-size: 0.72rem; }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(18px); }
@@ -548,6 +576,9 @@
 
     <!-- LEFT PANEL -->
     <div class="left-panel">
+      <a href="{{ route('Landing.Page') }}" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Home
+      </a>
       <div class="left-content">
 
         <!-- Logo -->

@@ -453,7 +453,7 @@
       <div class="dd-panel">
         <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
         <a href="{{ route('Member.AboutUs') }}">Mission & Vision</a>
-        <a href="{{ route('Under.Construction') ?? '#' }}">Board of Directors</a>
+        <a href="{{ route('Member.BOD') }}">Board of Directors</a>
         <a href="{{ route('Under.Construction') ?? '#' }}">Committee Officers</a>
       </div>
     </div>
@@ -498,7 +498,7 @@
     <div class="mobile-sub">
       <a href="{{ route('Member.AboutUs') }}">About GBLDC</a>
       <a href="{{ route('Under.Construction') }}">Mission & Vision</a>
-      <a href="{{ route('Under.Construction') }}">Board of Directors</a>
+      <a href="{{ route('Member.BOD') }}">Board of Directors</a>
       <a href="{{ route('Under.Construction') }}">Committee Officers</a>
     </div>
   </div>
@@ -734,9 +734,9 @@
     <div class="f-bottom">
       <span class="f-copy">© {{ date('Y') }} Greater Bulacan Livelihood Development Cooperative. All rights reserved.</span>
       <div class="f-legal">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Cookie Policy</a>
+        <a href="{{ route('Member.Policies') }}#privacy">Privacy Policy</a>
+        <a href="{{ route('Member.Policies') }}#terms">Terms of Service</a>
+        <a href="{{ route('Member.Policies') }}#cookies">Cookie Policy</a>
       </div>
     </div>
   </div>
@@ -764,7 +764,7 @@
     </div>
     <div class="cb-text">
       <h4>We Value Your Privacy</h4>
-      <p>GBLDC uses cookies to ensure you get the best experience on our cooperative portal. By continuing to use our site, you agree to our <a href="{{ route('Under.Construction') }}">Cookie Policy</a>.</p>
+      <p>GBLDC uses cookies to ensure you get the best experience on our cooperative portal. By continuing to use our site, you agree to our <a href="{{ route('Member.Policies') }}#cookies">Cookie Policy</a>.</p>
     </div>
   </div>
   <div class="cb-actions">

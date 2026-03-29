@@ -32,6 +32,11 @@ class LandingPage extends Controller
         return view('guest.policies');
     }
 
+    public function BoardOfDirectors()
+    {
+        return view('guest.BoardOfDirectors');
+    }
+
     public function NewsEvents(){
         $dbNews = \App\Models\LandingPageContent::where('is_active', true)
             ->whereIn('target_audience', ['guest', 'both'])
@@ -47,7 +52,7 @@ class LandingPage extends Controller
                     'title' => $item->title,
                     'excerpt' => \Illuminate\Support\Str::limit($item->content, 120),
                     'date' => $item->created_at->format('F d, Y'),
-                    'category' => 'Updates',
+                    'category' => $item->category ? ucfirst($item->category) : 'Updates',
                     'image' => $item->image_path ? $item->image_path : 'images/event1.jpg',
                     'is_featured' => false,
                     'link' => $item->link_url ?? '#'

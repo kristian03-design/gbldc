@@ -85,6 +85,7 @@ Route::get('/', function () {
 Route::get('/GBLDC', [LandingPage::class , 'Landing'])->name('Landing.Page');
 Route::get('/Loans', [LandingPage::class , 'LoanPage'])->name('Guest.Loans');
 Route::get('/About-Us', [LandingPage::class , 'AboutUs'])->name('Guest.AboutUs');
+Route::get('/Board-of-Directors', [LandingPage::class , 'BoardOfDirectors'])->name('Guest.BOD');
 Route::get('/News-Events', [LandingPage::class , 'NewsEvents'])->name('Guest.NewsEvents');
 Route::get('/Testimonials', [LandingPage::class , 'Testimonials'])->name('Guest.Testimonials');
 Route::get('/Legal-Policies', [LandingPage::class , 'Policies'])->name('Guest.Policies');
@@ -226,6 +227,8 @@ Route::middleware(['auth:officialmember'])->group(function () {
             Route::get('/Member-Loans', [MemberLandingPage::class , 'MemberLoanPage'])->name('Member.Loans');
             Route::get('/Member-News-Events', [MemberLandingPage::class , 'NewsEvents'])->name('Member.NewsEvents');
             Route::get('/Member-Testimonials', [MemberLandingPage::class , 'Testimonials'])->name('Member.Testimonials');
+            Route::get('/Member-Policies', [MemberLandingPage::class , 'Policies'])->name('Member.Policies');
+            Route::get('/Member-Board-of-Directors', [MemberLandingPage::class , 'BoardOfDirectors'])->name('Member.BOD');
 
             // Loan Application
             Route::get('/Redirecting-to-Loan-Application', [redirectToLoanApp::class , 'RedirectToLoanApp'])->name('Redirecting.LoanApp');

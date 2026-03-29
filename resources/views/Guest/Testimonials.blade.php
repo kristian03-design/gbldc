@@ -246,7 +246,7 @@
       </button>
       <div class="dd-panel">
         <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-        <a href="#">Board of Directors</a>
+        <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
         <a href="#">Committee Officers</a>
       </div>
     </div>
@@ -277,7 +277,7 @@
     <button onclick="this.nextElementSibling.classList.toggle('open')">About</button>
     <div class="mobile-sub">
       <a href="{{ route('Guest.AboutUs') }}">About GBLDC</a>
-      <a href="#">Board of Directors</a>
+      <a href="{{ route('Guest.BOD') }}">Board of Directors</a>
       <a href="#">Committee Officers</a>
     </div>
   </div>

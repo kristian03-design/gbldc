@@ -47,6 +47,28 @@ class MemberLandingPage extends Controller
         return view('Members.MemberAboutUs', compact('user_account'));
     }
 
+    public function BoardOfDirectors()
+    {
+        $user_account = session('AuthUser') ?? session('user');
+
+        if (!$user_account) {
+            return redirect()->route('Member.Login')->with('error', 'Please login first.');
+        }
+
+        return view('Members.BoardOfDirectors', compact('user_account'));
+    }
+
+    public function Policies()
+    {
+        $user_account = session('AuthUser') ?? session('user');
+
+        if (!$user_account) {
+            return redirect()->route('Member.Login')->with('error', 'Please login first.');
+        }
+
+        return view('Members.MemberPolicies', compact('user_account'));
+    }
+
     public function NewsEvents()
     {
         $user_account = session('AuthUser') ?? session('user');
@@ -69,7 +91,7 @@ class MemberLandingPage extends Controller
                     'title' => $item->title,
                     'excerpt' => \Illuminate\Support\Str::limit($item->content, 120),
                     'date' => $item->created_at->format('F d, Y'),
-                    'category' => 'Updates',
+                    'category' => $item->category ? ucfirst($item->category) : 'Updates',
                     'image' => $item->image_path ? $item->image_path : 'images/event1.jpg',
                     'is_featured' => false,
                     'link' => $item->link_url ?? '#'

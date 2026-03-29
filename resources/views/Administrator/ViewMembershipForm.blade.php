@@ -499,13 +499,13 @@
 <div class="decision-bar">
   <div class="dbl">
     <div class="dbl-icon"><i data-lucide="gavel"></i></div>
-    <div><div class="dbl-title">Admin Decision</div><div class="dbl-sub">Approve with a Member ID, or reject this application.</div></div>
+    <div><div class="dbl-title">Admin Decision</div><div class="dbl-sub">A Member ID will be auto-assigned on approval. Reject to decline.</div></div>
   </div>
   <div class="dbr">
     <form action="{{route('Approve.member')}}" method="POST" class="approve-form">
       @csrf
       <input type="hidden" name="id" value="{{$Review->id}}">
-      <input type="text" name="member_id" class="member-id-input" placeholder="Assign Member ID" required>
+      <span style="font-size:12px;color:#6b7280;font-style:italic;"><i data-lucide="tag" style="width:12px;height:12px;display:inline;"></i> Auto ID: GBLDC-####</span>
       <button type="submit" class="btn approve"><i data-lucide="circle-check-big"></i> Approve</button>
     </form>
     <div class="btn-sep"></div>

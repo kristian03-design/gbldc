@@ -36,7 +36,7 @@
       display: flex;
     }
 
-    /* ── Sidebar ── */
+    /* ── Sidebar (unchanged) ── */
     .sidebar {
       width: var(--sidebar-w);
       background: var(--forest);
@@ -46,7 +46,6 @@
       z-index: 100;
       transition: transform .3s ease;
     }
-
     .sidebar-logo {
       display: flex; align-items: center; gap: 12px;
       padding: 22px 20px 18px;
@@ -57,8 +56,6 @@
       font-size: 18px; font-weight: 700; color: #fff; line-height: 1.2;
     }
     .logo-sub { font-size: 10px; opacity: .5; letter-spacing: .08em; text-transform: uppercase; }
-
-    /* User profile card in sidebar */
     .sidebar-profile {
       margin: 14px 12px;
       padding: 12px;
@@ -76,10 +73,7 @@
     .profile-avatar.male   { background: #dbeafe; }
     .profile-avatar svg { width: 22px; height: 22px; }
     .profile-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; }
-    .profile-email { font-size: 11px; opacity: .5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-
     .sidebar-nav { flex: 1; padding: 8px 12px; overflow-y: auto; }
-
     .nav-item {
       display: flex; align-items: center; justify-content: space-between;
       padding: 10px 12px; border-radius: 10px;
@@ -96,7 +90,6 @@
     .nav-item.danger { color: rgba(248,113,113,.8); }
     .nav-item.danger:hover { background: rgba(239,68,68,.1); color: #fca5a5; }
     .badge-unread { background: var(--rose); color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
-
     .sidebar-footer {
       padding: 14px 12px;
       border-top: 1px solid rgba(255,255,255,.1);
@@ -122,74 +115,183 @@
       flex-direction: column; min-height: 100vh;
     }
 
-    /* ── Topbar ── */
+    /* ── Topbar — REDESIGNED ── */
     .topbar {
       background: var(--white);
       border-bottom: 1px solid var(--border);
-      padding: 14px 32px;
+      padding: 0 36px;
       position: sticky; top: 0; z-index: 50;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: stretch;
+      min-height: 72px;
     }
-    .topbar h1 {
+    .topbar-left {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .topbar-icon-wrap {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: var(--sage);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .topbar-icon-wrap i { width: 22px; height: 22px; color: var(--forest); }
+    .topbar-title {
       font-family: 'Playfair Display', serif;
-      font-size: 22px; font-weight: 700; color: var(--forest);
+      font-size: 22px; font-weight: 700; color: var(--forest); line-height: 1.2;
     }
-    .breadcrumb {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 12px; color: var(--muted); margin-top: 3px;
+    .topbar-sub {
+      font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 5px;
     }
-    .breadcrumb a { color: var(--muted); text-decoration: none; transition: color .15s; }
-    .breadcrumb a:hover { color: var(--forest); }
-    .breadcrumb .sep { color: #d1d5db; }
-    .breadcrumb .current { color: var(--ink); font-weight: 600; }
+    .topbar-sub a { color: var(--muted); text-decoration: none; transition: color .15s; }
+    .topbar-sub a:hover { color: var(--forest); }
+    .topbar-sub .sep { color: #d1d5db; }
+    .topbar-sub .current { color: var(--ink); font-weight: 600; }
+
+    .topbar-right {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .topbar-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--sage); color: var(--forest);
+      font-size: 12px; font-weight: 700;
+      padding: 7px 14px; border-radius: 30px;
+      letter-spacing: .02em;
+    }
+    .topbar-pill i { width: 14px; height: 14px; }
+    .topbar-divider { height: 60%; width: 1px; background: var(--border); }
 
     /* ── Page body ── */
-    .page-body { padding: 28px 32px; flex: 1; max-width: 900px; margin: 0 auto; width: 100%; }
+    .page-body {
+      padding: 32px 36px; flex: 1;
+      max-width: 920px; margin: 0 auto; width: 100%;
+    }
 
-    /* ── Notifications List ── */
+    /* ── Section header ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 3px; height: 14px;
+      background: var(--emerald); border-radius: 2px;
+    }
+    .btn-mark-all {
+      font-size: 12px; font-weight: 600; color: var(--forest);
+      background: none; border: 1.5px solid var(--emerald);
+      padding: 6px 14px; border-radius: 8px; cursor: pointer;
+      transition: background .2s, color .2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-mark-all i { width: 13px; height: 13px; }
+    .btn-mark-all:hover { background: var(--emerald); color: #fff; }
+
+    /* ── Empty State ── */
     .empty-state {
-        text-align: center; padding: 60px 20px;
-        background: var(--white); border-radius: 16px; border: 1px dashed var(--border);
+      text-align: center; padding: 80px 20px;
+      background: var(--white); border-radius: 20px;
+      border: 1.5px dashed var(--border);
     }
-    .empty-state i { width: 48px; height: 48px; color: var(--muted); margin-bottom: 12px; }
-    .empty-state h3 { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
-    .empty-state p { font-size: 14px; color: var(--muted); }
+    .empty-icon-wrap {
+      width: 80px; height: 80px; border-radius: 24px;
+      background: var(--sage); margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .empty-icon-wrap i { width: 36px; height: 36px; color: var(--forest); }
+    .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; color: var(--muted); max-width: 340px; margin: 0 auto; line-height: 1.6; }
 
-    .notif-list { display: flex; flex-direction: column; gap: 12px; }
-    
+    /* ── Notification Cards ── */
+    .notif-list { display: flex; flex-direction: column; gap: 10px; }
+
     .notif-item {
-        background: var(--white); border-radius: 16px; border: 1px solid var(--border);
-        padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start;
-        transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 16px;
+      align-items: start;
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+      animation: slideUp .35s ease both;
     }
-    .notif-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .notif-item.unread { border-left: 4px solid var(--emerald); background: #f0fdf4; }
-    
+    .notif-item:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13,74,47,.07); }
+
+    /* Unread: left accent bar */
+    .notif-item.unread {
+      border-color: transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, #22c55e22, #0d4a2f11) border-box;
+      border: 1px solid transparent;
+      box-shadow: inset 3px 0 0 var(--emerald), 0 2px 12px rgba(13,74,47,.06);
+    }
+
+    /* Staggered animation */
+    .notif-item:nth-child(1) { animation-delay: .05s; }
+    .notif-item:nth-child(2) { animation-delay: .10s; }
+    .notif-item:nth-child(3) { animation-delay: .15s; }
+    .notif-item:nth-child(4) { animation-delay: .20s; }
+    .notif-item:nth-child(5) { animation-delay: .25s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Icon */
     .notif-icon {
-        width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-        display: flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
     }
-    .notif-icon.loan { background: var(--sage); color: var(--forest); }
+    .notif-icon.loan { background: var(--sage); color: var(--forest-mid); }
     .notif-icon.system { background: #e0f2fe; color: #0284c7; }
     .notif-icon.alert { background: #fee2e2; color: #dc2626; }
     .notif-icon i { width: 22px; height: 22px; }
 
-    .notif-content { flex: 1; }
-    .notif-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-    .notif-title { font-size: 16px; font-weight: 700; color: var(--ink); }
-    .notif-time { font-size: 12px; color: var(--muted); font-weight: 500; }
-    .notif-message { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    
-    .notif-actions { margin-top: 12px; display: flex; gap: 10px; }
-    .btn-sm {
-        font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px;
-        border: none; cursor: pointer; transition: background 0.2s;
-        display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    /* Content */
+    .notif-content { min-width: 0; }
+    .notif-title {
+      font-size: 15px; font-weight: 700; color: var(--ink);
+      margin-bottom: 4px; line-height: 1.3;
     }
-    .btn-sm i { width: 14px; height: 14px; }
-    .btn-mark { background: #e5e7eb; color: var(--ink); }
-    .btn-mark:hover { background: #d1d5db; }
-    .btn-action { background: var(--forest); color: white; }
+    .notif-message {
+      font-size: 13.5px; color: var(--muted); line-height: 1.65;
+    }
+    .notif-actions { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Right meta column */
+    .notif-meta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+      flex-shrink: 0; padding-top: 2px;
+    }
+    .notif-time {
+      font-size: 11.5px; color: var(--muted); font-weight: 500;
+      white-space: nowrap;
+    }
+    .notif-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    /* Buttons */
+    .btn-sm {
+      font-size: 12px; font-weight: 600; padding: 7px 13px; border-radius: 8px;
+      border: none; cursor: pointer; transition: background .2s, transform .1s;
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    }
+    .btn-sm:active { transform: scale(.97); }
+    .btn-sm i { width: 13px; height: 13px; }
+    .btn-mark { background: #f3f4f6; color: var(--ink); }
+    .btn-mark:hover { background: #e5e7eb; }
+    .btn-action {
+      background: var(--forest); color: white;
+      box-shadow: 0 2px 8px rgba(13,74,47,.25);
+    }
     .btn-action:hover { background: var(--forest-mid); }
 
     /* ── Scrollbar ── */
@@ -199,18 +301,19 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      :root { --sidebar-w: 260px; }
       .sidebar { transform: translateX(-260px); }
       .sidebar.open { transform: translateX(0); }
       .main { margin-left: 0; }
       .mobile-toggle { display: flex; }
       .page-body { padding: 20px 18px; }
-      .topbar { padding: 14px 18px; margin-left: 40px; }
+      .topbar { padding: 0 18px; margin-left: 40px; }
     }
     @media (max-width: 640px) {
-      .notif-item { flex-direction: column; }
+      .notif-item { grid-template-columns: 44px 1fr; }
+      .notif-meta { flex-direction: row; align-items: center; grid-column: 1 / -1; justify-content: space-between; padding-top: 0; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+      .topbar-right { display: none; }
     }
-    
+
     /* ── Modals ── */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
@@ -218,10 +321,9 @@
       align-items: center; justify-content: center; padding: 16px;
     }
     .modal-overlay.open { display: flex; }
-
     .modal {
-      background: var(--white); border-radius: 16px;
-      padding: 28px; width: 100%; max-width: 440px;
+      background: var(--white); border-radius: 20px;
+      padding: 32px; width: 100%; max-width: 440px;
       animation: popIn .25s ease;
     }
     @keyframes popIn {
@@ -229,10 +331,10 @@
       to   { opacity: 1; transform: scale(1)  translateY(0); }
     }
     .modal-h { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 6px; font-family: 'Playfair Display', serif; }
-    .modal-p  { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 22px; }
+    .modal-p { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 24px; }
     .modal-btns { display: flex; gap: 10px; justify-content: center; }
     .modal-btn {
-      flex: 1; padding: 11px; border-radius: 10px;
+      flex: 1; padding: 12px; border-radius: 10px;
       font-size: 14px; font-weight: 600; text-align: center;
       border: none; cursor: pointer; text-decoration: none;
       transition: background .2s; font-family: 'DM Sans', sans-serif;
@@ -250,7 +352,7 @@
   <i data-lucide="menu"></i>
 </button>
 
-<!-- ═══ Sidebar ═══ -->
+<!-- ═══ Sidebar (UNCHANGED) ═══ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <img src="{{asset('images/logocoop-removebg-preview-2.png')}}" alt="GBLDC Logo"
@@ -261,7 +363,6 @@
     </div>
   </div>
 
-  <!-- Profile -->
   <div class="sidebar-profile">
     <div class="profile-avatar {{ strtolower($AutoComplete->gender ?? '') == 'female' ? 'female' : 'male' }}">
       @if(strtolower($AutoComplete->gender ?? '') == 'female')
@@ -293,7 +394,6 @@
     </a>
     <a href="{{ route('Member.Notifications') }}" class="nav-item active">
       <div class="nav-group"><i data-lucide="bell"></i> Notification</div>
-      <!-- dynamic badge injected via JS -->
       <span class="badge-unread" id="notif-badge" style="display: none;">0</span>
     </a>
     <a href="{{ route('Member.ContactUs') }}" class="nav-item">
@@ -315,70 +415,105 @@
 
 <!-- ═══ Main Content ═══ -->
 <main class="main" id="main">
-  <!-- Topbar -->
+
+  <!-- Topbar — REDESIGNED -->
   <div class="topbar">
-    <div>
-      <h1>Inbox & Alerts</h1>
-      <div class="breadcrumb">
-        <a href="{{route('Member.Landing')}}">Member Portal</a>
-        <span class="sep">/</span>
-        <span class="current">Notifications</span>
+    <div class="topbar-left">
+      <div class="topbar-icon-wrap">
+        <i data-lucide="bell"></i>
+      </div>
+      <div>
+        <div class="topbar-title">Inbox & Alerts</div>
+        <div class="topbar-sub">
+          <a href="{{route('Member.Landing')}}">Member Portal</a>
+          <span class="sep">/</span>
+          <span class="current">Notifications</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill" id="topbar-unread-pill" style="display:none;">
+        <i data-lucide="circle-dot"></i>
+        <span id="topbar-unread-label">0 unread</span>
       </div>
     </div>
   </div>
 
   <!-- Content Body -->
   <div class="page-body">
-    @if(count($notifications) == 0)
-        <!-- Empty State -->
-        <div class="empty-state">
-            <i data-lucide="inbox"></i>
-            <h3>You're all caught up!</h3>
-            <p>You don't have any notifications at the moment. We'll alert you here when important updates happen.</p>
-        </div>
-    @else
-        <!-- Notifications List -->
-        <div class="notif-list">
-            @foreach($notifications as $notif)
-            <div class="notif-item {{ $notif->is_read ? '' : 'unread' }}" id="notif-{{ $notif->id }}">
-                <div class="notif-icon {{ $notif->type === 'loan_eligibility' ? 'loan' : 'system' }}">
-                    <i data-lucide="{{ $notif->type === 'loan_eligibility' ? 'award' : 'bell' }}"></i>
-                </div>
-                <div class="notif-content">
-                    <div class="notif-header">
-                        <div class="notif-title">{{ $notif->title }}</div>
-                        <div class="notif-time">{{ $notif->created_at->diffForHumans() }}</div>
-                    </div>
-                    <div class="notif-message">
-                        {{ $notif->message }}
-                    </div>
-                    
-                    <div class="notif-actions">
-                        @if($notif->type === 'loan_eligibility')
-                            <form action="{{ route('Redirecting.LoanApp') }}" method="GET" style="display:inline;">
-                                @csrf
-                                <input type="hidden" name="account" value="{{ $AutoComplete->member_id }}">
-                                <button type="submit" class="btn-sm btn-action"><i data-lucide="mouse-pointer-click"></i> Apply Now</button>
-                            </form>
-                        @endif
 
-                        @if(!$notif->is_read)
-                            <button class="btn-sm btn-mark" onclick="markAsRead({{ $notif->id }})"><i data-lucide="check-check"></i> Mark as Read</button>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
+    @if(count($notifications) == 0)
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <i data-lucide="inbox"></i>
         </div>
+        <h3>You're all caught up!</h3>
+        <p>You don't have any notifications at the moment. We'll alert you here when important updates happen.</p>
+      </div>
+
+    @else
+      <!-- Section header -->
+      <div class="section-header">
+        <div class="section-label">All Notifications</div>
+      </div>
+
+      <!-- Notifications List -->
+      <div class="notif-list">
+        @foreach($notifications as $notif)
+        <div class="notif-item {{ $notif->is_read ? '' : 'unread' }}" id="notif-{{ $notif->id }}">
+
+          <!-- Icon -->
+          <div class="notif-icon {{ $notif->type === 'loan_eligibility' ? 'loan' : 'system' }}">
+            <i data-lucide="{{ $notif->type === 'loan_eligibility' ? 'award' : 'bell' }}"></i>
+          </div>
+
+          <!-- Content -->
+          <div class="notif-content">
+            <div class="notif-title">{{ $notif->title }}</div>
+            <div class="notif-message">{{ $notif->message }}</div>
+
+            <div class="notif-actions">
+              @if($notif->type === 'loan_eligibility')
+                <form action="{{ route('Redirecting.LoanApp') }}" method="GET" style="display:inline;">
+                  @csrf
+                  <input type="hidden" name="account" value="{{ $AutoComplete->member_id }}">
+                  <button type="submit" class="btn-sm btn-action">
+                    <i data-lucide="mouse-pointer-click"></i> Apply Now
+                  </button>
+                </form>
+              @endif
+              @if(!$notif->is_read)
+                <button class="btn-sm btn-mark" onclick="markAsRead({{ $notif->id }})">
+                  <i data-lucide="check-check"></i> Mark as Read
+                </button>
+              @endif
+            </div>
+          </div>
+
+          <!-- Meta: time + unread dot -->
+          <div class="notif-meta">
+            <div class="notif-time">{{ $notif->created_at->diffForHumans() }}</div>
+            @if(!$notif->is_read)
+              <div class="notif-dot" id="dot-{{ $notif->id }}"></div>
+            @endif
+          </div>
+
+        </div>
+        @endforeach
+      </div>
     @endif
+
   </div>
 </main>
 
 <!-- Logout Modal -->
 <div class="modal-overlay" id="logoutModal">
   <div class="modal">
-    <div style="text-align:center;margin-bottom:12px;">
-      <i data-lucide="log-out" style="width:32px;height:32px;color:#ef4444;"></i>
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="width:60px;height:60px;border-radius:18px;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+        <i data-lucide="log-out" style="width:28px;height:28px;color:#ef4444;"></i>
+      </div>
     </div>
     <h3 class="modal-h">Confirm Logout</h3>
     <p class="modal-p">Are you sure you want to log out of your GBLDC member portal account?</p>
@@ -392,13 +527,11 @@
 <script>
   lucide.createIcons();
 
-  // Mobile toggle behavior
+  // Mobile toggle
   const mobileToggle = document.getElementById('mobileToggle');
   const sidebar = document.getElementById('sidebar');
   if (mobileToggle && sidebar) {
-    mobileToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
+    mobileToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
   }
 
   // Logout modal
@@ -408,22 +541,27 @@
     if (e.target === this) closeLogoutModal();
   });
 
-  // Fetch unread count badge
+  // Fetch & display unread count
   function fetchUnreadCount() {
     fetch('{{ route("Member.Notifications.Count") }}')
       .then(res => res.json())
       .then(data => {
         const badge = document.getElementById('notif-badge');
+        const pill  = document.getElementById('topbar-unread-pill');
+        const label = document.getElementById('topbar-unread-label');
         if (data.count > 0) {
           badge.textContent = data.count;
           badge.style.display = 'inline-block';
+          pill.style.display  = 'inline-flex';
+          label.textContent   = `${data.count} unread`;
         } else {
           badge.style.display = 'none';
+          pill.style.display  = 'none';
         }
       });
   }
 
-  // Mark specific notification as read natively utilizing Fetch API
+  // Mark as read
   function markAsRead(id) {
     fetch(`/Member-Notifications/${id}/read`, {
       method: 'POST',
@@ -437,12 +575,13 @@
       if (data.success) {
         const item = document.getElementById(`notif-${id}`);
         item.classList.remove('unread');
-        
-        // Hide the mark as read button
+
         const markBtn = item.querySelector('.btn-mark');
         if (markBtn) markBtn.style.display = 'none';
 
-        // Update badge count dynamically
+        const dot = document.getElementById(`dot-${id}`);
+        if (dot) dot.remove();
+
         fetchUnreadCount();
       }
     })
@@ -452,7 +591,6 @@
     });
   }
 
-  // Init badge
   document.addEventListener('DOMContentLoaded', fetchUnreadCount);
 </script>
 

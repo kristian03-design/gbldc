@@ -22,6 +22,7 @@ class WebContentController extends Controller
         $data = $request->validate([
             'target_audience' => 'required|string',
             'section_type' => 'required|string',
+            'category' => 'nullable|string',
             'title' => 'nullable|string',
             'subtitle' => 'nullable|string',
             'content' => 'nullable|string',
@@ -58,6 +59,7 @@ class WebContentController extends Controller
         $data = $request->validate([
             'target_audience' => 'required|string',
             'section_type' => 'required|string',
+            'category' => 'nullable|string',
             'title' => 'nullable|string',
             'subtitle' => 'nullable|string',
             'content' => 'nullable|string',
