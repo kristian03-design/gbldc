@@ -612,6 +612,7 @@
             <div class="input-wrap">
               <i class="fa fa-envelope input-icon"></i>
               <input id="MemberEmail" name="username" type="email"
+                value="{{ old('username') }}"
                 placeholder="example@mail.com"
                 class="form-input"
                 required autocomplete="username">

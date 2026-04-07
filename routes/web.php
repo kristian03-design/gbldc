@@ -74,6 +74,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NewsAndEventsController;
 use App\Http\Controllers\UnderConstructionController;
 use App\Http\Controllers\WebContentController;
+use App\Http\Controllers\ReportController;
 
 
 /* |-------------------------------------------------------------------------- | Guest Routes |-------------------------------------------------------------------------- */
@@ -126,8 +127,15 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/Admin-Settings', [AdminSettingsController::class , 'show'])->name('Admin.Settings');
     Route::post('/Admin-Settings/Profile', [AdminSettingsController::class , 'updateProfile'])->name('Admin.Settings.Profile');
     Route::post('/Admin-Settings/Password', [AdminSettingsController::class , 'updatePassword'])->name('Admin.Settings.Password');
+    Route::post('/Admin-Settings/Profile-Picture', [AdminSettingsController::class, 'updateProfilePicture'])->name('Admin.Settings.ProfilePicture');
     Route::get('/Admin-Create-Staff', [admincreatestaff::class , 'AdminCreate'])->name('Admin.form');
     Route::post('/Admin-Create-Success', [createstaff::class , 'createstaff'])->name('Create.staff');
+
+    // Reports
+    Route::get('/Admin-Reports', [ReportController::class, 'index'])->name('Admin.Reports');
+    Route::get('/Admin-Reports/Export/Members', [ReportController::class, 'exportMembers'])->name('Admin.Reports.Export.Members');
+    Route::get('/Admin-Reports/Export/Loans', [ReportController::class, 'exportLoans'])->name('Admin.Reports.Export.Loans');
+    Route::get('/Admin-Reports/Export/SharedCapital', [ReportController::class, 'exportSharedCapital'])->name('Admin.Reports.Export.SharedCapital');
 
     // Loan Applications
     Route::get('/Admin-Loan-Application-List', [cooplist::class , 'List'])->name('LoanApp.list');
@@ -257,6 +265,7 @@ Route::middleware(['auth:officialmember'])->group(function () {
             Route::put('/Member-Account-Settings-Contact', [AccountSettings::class , 'updateContact'])->name('Member.AccountSettings.UpdateContact');
             Route::put('/Member-Account-Settings-Password', [AccountSettings::class , 'updatePassword'])->name('Member.AccountSettings.UpdatePassword');
             Route::put('/Member-Account-Settings-Address', [AccountSettings::class , 'updateAddress'])->name('Member.AccountSettings.UpdateAddress');
+            Route::post('/Member-Account-Settings-Profile-Picture', [AccountSettings::class , 'updateProfilePicture'])->name('Member.AccountSettings.UpdateProfilePicture');
             Route::get('/Member-Contact-Us', [ContactUs::class , 'index'])->name('Member.ContactUs');
             Route::post('/Member-Contact-Us-Submit', [ContactUs::class , 'submit'])->name('Member.ContactUs.Submit');
             Route::get('/Member-FAQ', [FAQController::class , 'index'])->name('Member.FAQ');

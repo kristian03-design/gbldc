@@ -263,7 +263,25 @@
       .topbar { padding: 12px 16px; }
       .form-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* RESPONSIVE INJECT */
+    .mobile-toggle { display: none; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+    .sidebar-overlay.show { display: block; }
+    @media (max-width: 900px) {
+      :root { --sidebar-w: 0px !important; }
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; width: 260px !important; z-index: 100 !important; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0 !important; width: 100% !important; min-width: 100vw; }
+      .mobile-toggle { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; border: none; background: #f3f4f6; color: var(--ink); cursor: pointer; flex-shrink: 0; margin-right: 12px; }
+      .topbar { padding: 14px 16px !important; }
+      .tables-grid, .stats-grid, .loan-grid, .kpi-strip { grid-template-columns: 1fr !important; }
+      .page-body { padding: 16px !important; }
+      .topbar-left, .topbar-title { display: flex !important; align-items: center !important; }
+      .hide-mobile { display: none !important; }
+    }
+</style>
+
 </head>
 <body>
 
@@ -306,6 +324,11 @@
       <i data-lucide="piggy-bank"></i> Shared Capital
     </a>
 
+    <div class="nav-section-label">Reports</div>
+    <a href="{{route('Admin.Reports')}}" class="nav-item">
+      <i data-lucide="bar-chart-2"></i> Cooperative Reports
+    </a>
+
     <div class="nav-section-label">System</div>
     <a href="{{route('Admin.manage')}}" class="nav-item">
       <i data-lucide="shield-check"></i> Manage Users
@@ -317,7 +340,13 @@
 
   <div class="sidebar-footer">
     <div class="user-card" id="user-menu-button">
-      <div class="avatar">A</div>
+      <div class="avatar">
+        @if(auth('admin')->check() && auth('admin')->user()->profile_picture)
+          <img src="{{ asset('images/profile_pictures/' . auth('admin')->user()->profile_picture) }}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+        @else
+          A
+        @endif
+      </div>
       <div class="user-info">
         <div class="name">Admin</div>
         <div class="role">Super Administrator</div>
@@ -336,8 +365,12 @@
 </aside>
 
 <div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show');"></div>
+<header class="topbar">
+  <div class="topbar-left" style="display:flex; align-items:center;">
+    <button class="mobile-toggle" id="mobile-toggle" onclick="document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show');" style="margin-right:12px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
       <a href="{{route('Admin.dashboard')}}" class="back-btn">
         <i data-lucide="arrow-left"></i> Back
       </a>
@@ -353,6 +386,38 @@
       <h2>Admin Settings</h2>
       <p>Keep your account information up to date and secure.</p>
     </div>
+
+      <!-- Profile Picture Card -->
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="card-header">
+          <h3><i data-lucide="image"></i> Profile Picture</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ route('Admin.Settings.ProfilePicture') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="form-grid">
+              <div class="field full" style="display:flex; align-items:center; gap: 16px;">
+                <div class="avatar" style="width: 64px; height: 64px; font-size: 24px;">
+                  @if(auth('admin')->check() && auth('admin')->user()->profile_picture)
+                    <img src="{{ asset('images/profile_pictures/' . auth('admin')->user()->profile_picture) }}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                  @else
+                    A
+                  @endif
+                </div>
+                <div style="flex:1;">
+                  <label for="profile_picture">Upload New Picture</label>
+                  <input id="profile_picture" name="profile_picture" type="file" class="input" accept="image/*" required style="width:100%; margin-top: 6px;">
+                </div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn primary" type="submit">
+                <i data-lucide="upload"></i> Upload
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
     <div class="grid">
       <div class="card">
@@ -426,6 +491,12 @@
   </div>
 </div>
 
+<div id="flash-data" 
+     data-success="{{ session('success') }}" 
+     data-error="{{ session('error') }}" 
+     data-validation="{{ $errors->first() }}" 
+     style="display: none;"></div>
+
 <script>
   lucide.createIcons();
 
@@ -439,43 +510,46 @@
     document.addEventListener('click', () => { userMenu.style.display = 'none'; });
   }
 
-  @if(session('success'))
-  Swal.fire({
-    icon: 'success',
-    title: 'Success',
-    text: {!! json_encode(session('success')) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
-  @if(session('error'))
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: {!! json_encode(session('error')) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
-  @if($errors->any())
-  Swal.fire({
-    icon: 'warning',
-    title: 'Validation Error',
-    text: {!! json_encode($errors->first()) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3500,
-    timerProgressBar: true
-  });
-  @endif
+  const flash = document.getElementById('flash-data').dataset;
+
+  if (flash.success) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: flash.success,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+  
+  if (flash.error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: flash.error,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+  
+  if (flash.validation) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Validation Error',
+      text: flash.validation,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3500,
+      timerProgressBar: true
+    });
+  }
 </script>
 </body>
 </html>
-

@@ -81,6 +81,7 @@ class OfficialMember extends Authenticatable implements CanResetPasswordContract
         'username',
         'password',
         'must_change_password',
+        'profile_picture',
     ];
 
     /**

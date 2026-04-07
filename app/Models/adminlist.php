@@ -22,6 +22,7 @@ class adminlist extends Authenticatable
         'password',
         'position',
         'status',
+        'profile_picture',
     ];
 
     protected $hidden = [

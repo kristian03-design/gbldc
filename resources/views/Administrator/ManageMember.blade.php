@@ -521,6 +521,12 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<div id="flash-data" 
+     data-success="{{ session('success') }}" 
+     data-rejected="{{ session('rejected') }}"
+     data-error="{{ session('error') }}" 
+     data-validation="{{ $errors->first() }}" 
+     style="display: none;"></div>
 <script>
   // Init Lucide icons first
   lucide.createIcons();
@@ -535,54 +541,59 @@
   document.addEventListener('click', () => { userMenu.style.display = 'none'; });
 
   // Toast messages for approve/reject
-  @if(session('success'))
-  Swal.fire({
-    icon: 'success',
-    title: 'Success',
-    text: {!! json_encode(session('success')) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
-  @if(session('rejected'))
-  Swal.fire({
-    icon: 'info',
-    title: 'Rejected',
-    text: {!! json_encode(session('rejected')) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
-  @if(session('error'))
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: {!! json_encode(session('error')) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
-  @if($errors->any())
-  Swal.fire({
-    icon: 'warning',
-    title: 'Validation Error',
-    text: {!! json_encode($errors->first()) !!},
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true
-  });
-  @endif
+  const flash = document.getElementById('flash-data').dataset;
+
+  if (flash.success) {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: flash.success,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+  
+  if (flash.rejected) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Rejected',
+      text: flash.rejected,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+  
+  if (flash.error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: flash.error,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+  
+  if (flash.validation) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Validation Error',
+      text: flash.validation,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
 
   // DataTable — re-run createIcons after every draw so action icons render in paginated rows
   $(document).ready(function () {

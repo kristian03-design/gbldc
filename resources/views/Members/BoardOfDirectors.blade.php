@@ -332,7 +332,7 @@
     <div class="slant" aria-hidden="true"></div>
   </div>
   <div class="hero-image">
-    <img src="{{ asset('images/board-group-photo.jpg') }}" onerror="this.src='{{ asset('images/meeting-2.png') }}'" alt="Board of Directors Group">
+    <img src="{{ asset('images/board-group-photo.jpg') }}" onerror="this.src=`{{ asset('images/meeting-2.png') }}`" alt="Board of Directors Group">
   </div>
 </section>
 
@@ -356,7 +356,7 @@
       ] as $member)
       <div class="board-card">
         <div class="bc-img-wrap">
-          <img src="{{ asset('images/default-male-profile.svg') }}" onerror="this.src='{{ asset('images/profile.png') }}'" alt="{{ $member['name'] }}">
+          <img src="{{ asset('images/default-male-profile.svg') }}" onerror="this.src=`{{ asset('images/profile.png') }}`" alt="{{ $member['name'] }}">
         </div>
         <div class="bc-info">
           <h4 class="bc-name">{{ $member['name'] }}</h4>

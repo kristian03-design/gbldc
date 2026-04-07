@@ -124,4 +124,26 @@ class AccountSettings extends Controller
 
         return redirect()->route('Member.AccountSettings')->with('success', 'Password updated successfully!');
     }
+
+    public function updateProfilePicture(Request $request)
+    {
+        /** @var \App\Models\OfficialMember $user */
+        $user = Auth::guard('officialmember')->user();
+
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/profile_pictures'), $filename);
+
+            $user->update([
+                'profile_picture' => $filename,
+            ]);
+        }
+
+        return redirect()->route('Member.AccountSettings')->with('success', 'Profile picture updated successfully!');
+    }
 }

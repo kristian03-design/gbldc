@@ -282,7 +282,9 @@
 
   <div class="sidebar-profile">
     <div class="profile-avatar {{ strtolower($gender) == 'female' ? 'female' : 'male' }}">
-      @if(strtolower($gender) == 'female')
+      @if(auth('officialmember')->check() && auth('officialmember')->user()->profile_picture)
+        <img src="{{ asset('images/profile_pictures/' . auth('officialmember')->user()->profile_picture) }}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+      @elseif(isset($gender) && strtolower($gender) == 'female' || (isset($AutoComplete->gender) && strtolower($AutoComplete->gender) == 'female') || (isset($user) && strtolower($user->gender ?? '') == 'female'))
         <svg fill="currentColor" viewBox="0 0 24 24" style="color:#ec4899;width:22px;height:22px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
       @else
         <svg fill="currentColor" viewBox="0 0 24 24" style="color:#3b82f6;width:22px;height:22px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
@@ -457,6 +459,53 @@
     </div>
   </div>
 </div>
+@php
+  $calendarEvents = [];
+  $activeData = $type === 'loan' ? ($loanScheduleData ?? null) : ($sharedCapitalScheduleData ?? null);
+
+  if ($type === 'loan' && $activeData) {
+    foreach($activeData as $schedule) {
+      $dateStr = $schedule->due_date->format('Y-m-d');
+      $amount = number_format($schedule->monthly_payment + $schedule->penalty, 2);
+      if ($schedule->status === 'paid') {
+        $calendarEvents[] = ['title' => "✓ Paid ₱{$amount}", 'start' => $dateStr, 'backgroundColor' => '#16a34a', 'borderColor' => '#16a34a', 'extendedProps' => ['status' => 'paid', 'amount' => $amount]];
+      } elseif ($schedule->status === 'overdue') {
+        $calendarEvents[] = ['title' => "⚠ Overdue ₱{$amount}", 'start' => $dateStr, 'backgroundColor' => '#dc2626', 'borderColor' => '#dc2626', 'extendedProps' => ['status' => 'overdue', 'amount' => $amount]];
+      } else {
+        $calendarEvents[] = ['title' => "◷ Due ₱{$amount}", 'start' => $dateStr, 'backgroundColor' => '#2563eb', 'borderColor' => '#2563eb', 'extendedProps' => ['status' => 'upcoming', 'amount' => $amount]];
+      }
+    }
+  } elseif ($type !== 'loan' && $activeData) {
+    if (isset($activeData['months'])) {
+      foreach($activeData['months'] as $monthData) {
+        $payDay = isset($monthData['payment_day']) ? $monthData['payment_day'] : 1;
+        $dateStr = sprintf('%04d-%02d-%02d', $monthData['year'], $monthData['month'], $payDay);
+        if ($monthData['paymentMade']) {
+           $calendarEvents[] = ['title' => '✓ Paid', 'start' => $dateStr, 'backgroundColor' => '#16a34a', 'borderColor' => '#16a34a', 'extendedProps' => ['status' => 'paid', 'month' => $monthData['name']]];
+        } elseif ($monthData['isOverdue']) {
+           $calendarEvents[] = ['title' => '⚠ Overdue', 'start' => $dateStr, 'backgroundColor' => '#dc2626', 'borderColor' => '#dc2626', 'extendedProps' => ['status' => 'overdue', 'month' => $monthData['name']]];
+        } else {
+           $calendarEvents[] = ['title' => '◷ Due', 'start' => $dateStr, 'backgroundColor' => '#2563eb', 'borderColor' => '#2563eb', 'extendedProps' => ['status' => 'upcoming', 'month' => $monthData['name']]];
+        }
+      }
+    }
+    if (isset($activeData['paymentDays'])) {
+      foreach($activeData['paymentDays'] as $pd) {
+        if ($pd['isPaymentDay']) {
+          $dateStr = sprintf('%04d-%02d-%02d', $activeData['year'], $activeData['month'], $pd['day']);
+          if ($pd['paymentMade']) {
+             $calendarEvents[] = ['title' => '✓ Paid', 'start' => $dateStr, 'backgroundColor' => '#16a34a', 'borderColor' => '#16a34a', 'extendedProps' => ['status' => 'paid']];
+          } elseif ($pd['isOverdue']) {
+             $calendarEvents[] = ['title' => '⚠ Overdue', 'start' => $dateStr, 'backgroundColor' => '#dc2626', 'borderColor' => '#dc2626', 'extendedProps' => ['status' => 'overdue']];
+          } else {
+             $calendarEvents[] = ['title' => '◷ Due', 'start' => $dateStr, 'backgroundColor' => '#2563eb', 'borderColor' => '#2563eb', 'extendedProps' => ['status' => 'upcoming']];
+          }
+        }
+      }
+    }
+  }
+@endphp
+<div id="calendar-data" data-events="{{ json_encode($calendarEvents) }}" style="display:none;"></div>
 
 <script>
   lucide.createIcons();
@@ -483,115 +532,10 @@
     url.searchParams.set('type', type);
     window.location.href = url.toString();
   }
-
+  
   // ── Build FullCalendar events from Laravel blade data ──
-  const events = [];
-
-  @php
-    $activeData = $type === 'loan' ? ($loanScheduleData ?? null) : ($sharedCapitalScheduleData ?? null);
-  @endphp
-
-  @if($type === 'loan' && $activeData)
-    @foreach($activeData as $schedule)
-      @php
-        $dateStr = $schedule->due_date->format('Y-m-d');
-        $amount = number_format($schedule->monthly_payment + $schedule->penalty, 2);
-      @endphp
-      @if($schedule->status === 'paid')
-        events.push({
-          title: '✓ Paid ₱{{$amount}}',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#16a34a',
-          borderColor: '#16a34a',
-          extendedProps: { status: 'paid', amount: '{{$amount}}' }
-        });
-      @elseif($schedule->status === 'overdue')
-        events.push({
-          title: '⚠ Overdue ₱{{$amount}}',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#dc2626',
-          borderColor: '#dc2626',
-          extendedProps: { status: 'overdue', amount: '{{$amount}}' }
-        });
-      @else
-        events.push({
-          title: '◷ Due ₱{{$amount}}',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#2563eb',
-          borderColor: '#2563eb',
-          extendedProps: { status: 'upcoming', amount: '{{$amount}}' }
-        });
-      @endif
-    @endforeach
-  @elseif($type !== 'loan' && $activeData && isset($activeData['months']))
-    @foreach($activeData['months'] as $monthData)
-      @php
-        // Build a date string for the payment due day (default to 1st of month)
-        $payDay = isset($monthData['payment_day']) ? $monthData['payment_day'] : 1;
-        $dateStr = sprintf('%04d-%02d-%02d', $monthData['year'], $monthData['month'], $payDay);
-      @endphp
-      @if($monthData['paymentMade'])
-        events.push({
-          title: '✓ Paid',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#16a34a',
-          borderColor: '#16a34a',
-          extendedProps: { status: 'paid', month: '{{ $monthData["name"] }}' }
-        });
-      @elseif($monthData['isOverdue'])
-        events.push({
-          title: '⚠ Overdue',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#dc2626',
-          borderColor: '#dc2626',
-          extendedProps: { status: 'overdue', month: '{{ $monthData["name"] }}' }
-        });
-      @else
-        events.push({
-          title: '◷ Due',
-          start: '{{ $dateStr }}',
-          backgroundColor: '#2563eb',
-          borderColor: '#2563eb',
-          extendedProps: { status: 'upcoming', month: '{{ $monthData["name"] }}' }
-        });
-      @endif
-    @endforeach
-  @endif
-
-  @if($type !== 'loan' && $activeData && isset($activeData['paymentDays']))
-    @foreach($activeData['paymentDays'] as $pd)
-      @if($pd['isPaymentDay'])
-        @php
-          $dateStr = sprintf('%04d-%02d-%02d', $activeData['year'], $activeData['month'], $pd['day']);
-        @endphp
-        @if($pd['paymentMade'])
-          events.push({
-            title: '✓ Paid',
-            start: '{{ $dateStr }}',
-            backgroundColor: '#16a34a',
-            borderColor: '#16a34a',
-            extendedProps: { status: 'paid' }
-          });
-        @elseif($pd['isOverdue'])
-          events.push({
-            title: '⚠ Overdue',
-            start: '{{ $dateStr }}',
-            backgroundColor: '#dc2626',
-            borderColor: '#dc2626',
-            extendedProps: { status: 'overdue' }
-          });
-        @else
-          events.push({
-            title: '◷ Due',
-            start: '{{ $dateStr }}',
-            backgroundColor: '#2563eb',
-            borderColor: '#2563eb',
-            extendedProps: { status: 'upcoming' }
-          });
-        @endif
-      @endif
-    @endforeach
-  @endif
+  const calendarDataEl = document.getElementById('calendar-data');
+  const events = calendarDataEl && calendarDataEl.dataset.events ? JSON.parse(calendarDataEl.dataset.events) : [];
 
   // ── Initialize FullCalendar ──
   const calEl = document.getElementById('fullcalendar');

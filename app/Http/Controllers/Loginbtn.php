@@ -23,7 +23,7 @@ class Loginbtn extends Controller
             $user = Auth::guard('admin')->user();
             if ($user->status === 'Deactivated') {
                 Auth::guard('admin')->logout(); 
-                return redirect()->back()->with('error', 'Your account has been deactivated.');
+                return redirect()->back()->withInput($request->except('password'))->with('error', 'Your account has been deactivated.');
             }
 
             // Regenerate session to prevent session fixation attacks and "Page Expired" issues
@@ -73,7 +73,7 @@ class Loginbtn extends Controller
                 );
                 // #endregion
 
-                return back()->with('error', 'Failed to send OTP email. Please try again.');
+                return back()->withInput($request->except('password'))->with('error', 'Failed to send OTP email. Please try again.');
             }
 
             $encryptedOTP = Crypt::encrypt($OTP);
@@ -85,6 +85,6 @@ class Loginbtn extends Controller
 
             return redirect()->route('Otp.Page');
         }
-        return back()->with('error', 'Invalid email or password.');
+        return back()->withInput($request->except('password'))->with('error', 'Invalid email or password.');
     }
 }

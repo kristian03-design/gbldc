@@ -22,7 +22,7 @@ class MemberLoginBtn extends Controller
             // Check if account is deactivated
             if (isset($user->status) && $user->status === 'Deactivated') {
                 Auth::guard('officialmember')->logout();
-                return redirect()->back()->with('error', 'Your account has been deactivated.');
+                return redirect()->back()->withInput($request->except('password'))->with('error', 'Your account has been deactivated.');
             }
 
             // Generate OTP
@@ -33,7 +33,7 @@ class MemberLoginBtn extends Controller
             
             if (!$userEmail) {
                 Auth::guard('officialmember')->logout();
-                return redirect()->back()->with('error', 'Your account does not have an email address. Please contact support.');
+                return redirect()->back()->withInput($request->except('password'))->with('error', 'Your account does not have an email address. Please contact support.');
             }
 
             // Get user name - check multiple possible fields
@@ -45,7 +45,7 @@ class MemberLoginBtn extends Controller
             try {
                 Mail::to($userEmail)->send(new \App\Mail\OTP($OTP, $userName, 'member'));
             } catch (\Exception $e) {
-                return back()->with('error', 'Failed to send OTP email. Please try again.');
+                return back()->withInput($request->except('password'))->with('error', 'Failed to send OTP email. Please try again.');
             }
 
             // Store encrypted OTP and user info in session
@@ -61,6 +61,6 @@ class MemberLoginBtn extends Controller
 
             return redirect()->route('Member.OTPpage');
         }
-        return redirect()->back()->with('error', 'Invalid email or password.');
+        return redirect()->back()->withInput($request->except('password'))->with('error', 'Invalid email or password.');
     }
 }
